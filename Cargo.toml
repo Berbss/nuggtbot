@@ -25,6 +25,17 @@ chrono = { version = "0.4", default-features = false, features = ["clock", "std"
 rsa = { version = "0.9", features = ["sha2", "pem"] }
 libloading = "0.8"
 
+# Desktop system-tray (optional). The default build is headless (server only);
+# desktop release artifacts are built with `--features tray`.
+tray-icon = { version = "0.19", optional = true }
+tao = { version = "0.30", optional = true }
+open = { version = "5", optional = true }
+resvg = { version = "0.44", optional = true }
+
+[features]
+# Off by default so the server/systemd build needs no GUI/GTK libraries.
+tray = ["dep:tray-icon", "dep:tao", "dep:open", "dep:resvg"]
+
 [profile.release]
 lto = true
 strip = true

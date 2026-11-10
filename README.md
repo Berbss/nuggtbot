@@ -75,6 +75,31 @@ cp config.toml.example config.toml
 The panel is then reachable at the bound address (default `127.0.0.1:7777`). Open it in a
 browser to configure accounts, commands, timers, integrations and overlays.
 
+### Install on a headless Linux server
+
+No toolchain needed — install the latest prebuilt **headless** binary (no GUI/GTK
+dependency) with one command:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/Berbss/nuggtbot/main/install.sh | sh
+```
+
+Review the script first if you prefer. It installs `nuggtbot` to `/usr/local/bin`
+(override with `PREFIX=`). To also set up a systemd service, run it as root with
+`NUGGTBOT_SERVICE=1`:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/Berbss/nuggtbot/main/install.sh | NUGGTBOT_SERVICE=1 sh
+```
+
+### Desktop app (system tray)
+
+Download the `.exe` (Windows), `.AppImage` (Linux), or the archive for your OS
+from the [Releases](https://github.com/Berbss/nuggtbot/releases) page. The desktop
+build shows the nuggtbot logo in the **system tray**: **left-click** opens the web
+panel in your browser; **right-click** gives a menu with **Open panel** and
+**Quit**. Pass `--headless` (or set `NUGGTBOT_HEADLESS=1`) to run server-only.
+
 ### ⚠️ YouTube — current limitations
 
 YouTube support uses the **YouTube Data API v3**, and **nuggtbot ships with no
@@ -172,6 +197,31 @@ cp config.toml.example config.toml
 
 O painel fica acessível no endereço configurado (padrão `127.0.0.1:7777`). Abra no navegador
 para configurar contas, comandos, timers, integrações e overlays.
+
+### Instalar num servidor Linux headless
+
+Sem toolchain — instale o binário **headless** pré-compilado (sem dependência de
+GUI/GTK) com um comando:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/Berbss/nuggtbot/main/install.sh | sh
+```
+
+Revise o script antes, se preferir. Ele instala o `nuggtbot` em `/usr/local/bin`
+(mude com `PREFIX=`). Para também criar um serviço systemd, rode como root com
+`NUGGTBOT_SERVICE=1`:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/Berbss/nuggtbot/main/install.sh | NUGGTBOT_SERVICE=1 sh
+```
+
+### App de desktop (system tray)
+
+Baixe o `.exe` (Windows), o `.AppImage` (Linux) ou o arquivo do seu sistema na
+página de [Releases](https://github.com/Berbss/nuggtbot/releases). A build de
+desktop mostra o logo do nuggtbot no **system tray**: **clique esquerdo** abre o
+painel web no navegador; **clique direito** abre um menu com **Open panel** e
+**Quit**. Use `--headless` (ou `NUGGTBOT_HEADLESS=1`) pra rodar só o servidor.
 
 ### ⚠️ YouTube — limitações atuais
 

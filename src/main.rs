@@ -24,12 +24,13 @@ mod vts;
 mod watchtime;
 mod web;
 mod youtube;
+#[cfg(feature = "tray")]
+mod tray;
 
 use std::sync::Arc;
 use tokio::sync::{broadcast, mpsc, Mutex};
 
-#[tokio::main]
-async fn main() -> anyhow::Result<()> {
+fn main() -> anyhow::Result<()> {
     tracing_subscriber::fmt()
         .with_env_filter(
             tracing_subscriber::EnvFilter::try_from_default_env()
@@ -37,6 +38,37 @@ async fn main() -> anyhow::Result<()> {
         )
         .init();
 
+    // --headless (or NUGGTBOT_HEADLESS) forces server-only mode (systemd/servers).
+    let headless = std::env::args().any(|a| a == "--headless")
+        || std::env::var_os("NUGGTBOT_HEADLESS").is_some();
+
+    #[cfg(feature = "tray")]
+    if !headless && tray::display_available() {
+        // Run the async app on a background thread; the tray owns the main thread.
+        let bind = config::Config::load("config.toml")
+            .map(|c| c.bind)
+            .unwrap_or_else(|_| "127.0.0.1:7777".into());
+        let url = tray::panel_url(&bind);
+        std::thread::Builder::new()
+            .name("nuggtbot-server".into())
+            .spawn(|| {
+                if let Err(e) = run_server_blocking() {
+                    tracing::error!("server exited: {e}");
+                    std::process::exit(1);
+                }
+            })?;
+        tray::run(url); // blocks on the main thread; exits the process on Quit
+        return Ok(());
+    }
+    let _ = headless;
+    run_server_blocking()
+}
+
+fn run_server_blocking() -> anyhow::Result<()> {
+    tokio::runtime::Runtime::new()?.block_on(run_server())
+}
+
+async fn run_server() -> anyhow::Result<()> {
     // Load dynamic plugins from `plugins/` once, before anything can dispatch one.
     plugin::load_all();
 

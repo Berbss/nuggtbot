@@ -1,0 +1,111 @@
+name: release
+
+# Build the desktop artifacts (with system tray) for Windows x64/ARM and
+# Linux x64/ARM, then attach them to the GitHub Release for the pushed tag.
+#   git tag v0.1.0 && git push origin v0.1.0
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            name: nuggtbot-windows-x86_64
+          - os: windows-11-arm
+            name: nuggtbot-windows-arm64
+          - os: ubuntu-22.04
+            name: nuggtbot-linux-x86_64
+          - os: ubuntu-24.04-arm
+            name: nuggtbot-linux-arm64
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      # tray-icon needs GTK3 + libxdo + appindicator on Linux; rsvg for the icon.
+      - name: Linux build deps
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-3-dev libxdo-dev libayatana-appindicator3-dev librsvg2-bin file wget
+
+      # Headless build (no tray) for the server tarball: no GTK runtime dependency,
+      # so it starts on a bare server. Saved aside before the tray build overwrites it.
+      - name: Build (headless, for Linux tarball)
+        if: runner.os == 'Linux'
+        run: |
+          cargo build --release
+          cp target/release/nuggtbot nuggtbot-headless
+
+      - name: Build (with tray)
+        run: cargo build --release --features tray
+
+      - name: Package (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force dist | Out-Null
+          Copy-Item target/release/nuggtbot.exe dist/
+          Copy-Item config.toml.example dist/
+          Copy-Item README.md dist/
+          Compress-Archive -Path dist/* -DestinationPath "${{ matrix.name }}.zip" -Force
+
+      - name: Package (Linux tarball)
+        if: runner.os == 'Linux'
+        run: |
+          mkdir -p dist
+          cp nuggtbot-headless dist/nuggtbot
+          cp config.toml.example README.md dist/
+          tar -C dist -czf "${{ matrix.name }}.tar.gz" .
+
+      - name: Package (AppImage)
+        if: runner.os == 'Linux'
+        run: |
+          set -eux
+          ARCH="$(uname -m)"
+          rsvg-convert -w 256 -h 256 assets/logo.svg -o nuggtbot.png
+          mkdir -p AppDir/usr/bin AppDir/usr/share/applications AppDir/usr/share/icons/hicolor/256x256/apps
+          cp target/release/nuggtbot AppDir/usr/bin/
+          cp nuggtbot.png AppDir/usr/share/icons/hicolor/256x256/apps/nuggtbot.png
+          cp nuggtbot.png AppDir/nuggtbot.png
+          cat > AppDir/nuggtbot.desktop <<'EOF'
+          [Desktop Entry]
+          Name=nuggtbot
+          Exec=nuggtbot
+          Icon=nuggtbot
+          Type=Application
+          Categories=Network;Utility;
+          Terminal=false
+          EOF
+          cp AppDir/nuggtbot.desktop AppDir/usr/share/applications/
+          cat > AppDir/AppRun <<'EOF'
+          #!/bin/sh
+          HERE="$(dirname "$(readlink -f "$0")")"
+          exec "$HERE/usr/bin/nuggtbot" "$@"
+          EOF
+          chmod +x AppDir/AppRun
+          if [ "$ARCH" = "aarch64" ]; then AITOOL=appimagetool-aarch64.AppImage; else AITOOL=appimagetool-x86_64.AppImage; fi
+          wget -q "https://github.com/AppImage/appimagetool/releases/download/continuous/$AITOOL"
+          chmod +x "$AITOOL"
+          # Extract instead of mounting: CI has no FUSE.
+          ./"$AITOOL" --appimage-extract >/dev/null
+          ARCH="$ARCH" ./squashfs-root/AppRun AppDir "${{ matrix.name }}.AppImage"
+
+      - name: Attach to release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            ${{ matrix.name }}.zip
+            ${{ matrix.name }}.tar.gz
+            ${{ matrix.name }}.AppImage
