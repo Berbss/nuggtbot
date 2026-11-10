@@ -55,12 +55,7 @@ jobs:
       - name: Package (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
-        run: |
-          New-Item -ItemType Directory -Force dist | Out-Null
-          Copy-Item target/release/nuggtbot.exe dist/
-          Copy-Item config.toml.example dist/
-          Copy-Item README.md dist/
-          Compress-Archive -Path dist/* -DestinationPath "${{ matrix.name }}.zip" -Force
+        run: Copy-Item target/release/nuggtbot.exe "${{ matrix.name }}.exe"
 
       - name: Package (Linux tarball)
         if: runner.os == 'Linux'
@@ -108,6 +103,6 @@ jobs:
         uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2
         with:
           files: |
-            ${{ matrix.name }}.zip
+            ${{ matrix.name }}.exe
             ${{ matrix.name }}.tar.gz
             ${{ matrix.name }}.AppImage
