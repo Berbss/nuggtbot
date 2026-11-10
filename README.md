@@ -101,8 +101,6 @@ A plugin is **unsandboxed native code** running with the bot's privileges: only 
 
 - [`MAKE-PLUGINS.md`](MAKE-PLUGINS.md) — how to build plugins (actions, config, overlays/docks).
 - [`ARCHITECTURE.md`](ARCHITECTURE.md) — target architecture and the Streamer.bot function catalog.
-- [`PLAN.md`](PLAN.md) — the full build plan and roadmap.
-- [`SB_PARITY.md`](SB_PARITY.md) — the nuggtbot ↔ Streamer.bot parity map.
 
 ---
 
@@ -202,5 +200,3 @@ Um plugin é **código nativo sem sandbox** rodando com os privilégios do bot: 
 
 - [`MAKE-PLUGINS.md`](MAKE-PLUGINS.md) — como criar plugins (ações, config, overlays/docks).
 - [`ARCHITECTURE.md`](ARCHITECTURE.md) — arquitetura-alvo e o catálogo de funções do Streamer.bot.
-- [`PLAN.md`](PLAN.md) — o plano de build completo e o roadmap.
-- [`SB_PARITY.md`](SB_PARITY.md) — o mapa de paridade nuggtbot ↔ Streamer.bot.
