@@ -45,3 +45,18 @@ AGENTS.md
 # Internal planning / parity notes — not for the public repo.
 /PLAN.md
 /SB_PARITY.md
+# aia-harness — keep the whole harness local-only, never commit it.
+/CLAUDE.md
+/.claude/
+/.mcp.json
+/.worktreeinclude
+/.graphifyignore
+/.lsp.json
+/docs/harness/
+/scripts/install-plugins.mjs
+.claude/settings.local.json
+.claude/*.local.*
+.claude/.aia-harness-pending/
+graphify-out/
+graphify-out/cost.json
+graphify-out/cache/
