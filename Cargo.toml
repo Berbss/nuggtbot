@@ -36,6 +36,13 @@ resvg = { version = "0.44", optional = true }
 # Off by default so the server/systemd build needs no GUI/GTK libraries.
 tray = ["dep:tray-icon", "dep:tao", "dep:open", "dep:resvg"]
 
+# Windows-host only (the CI Windows runners): embed the .exe icon from the SVG.
+# Not pulled on Linux/macOS hosts, so the server build is unaffected.
+[target.'cfg(windows)'.build-dependencies]
+winresource = "0.1"
+resvg = "0.44"
+ico = "0.3"
+
 [profile.release]
 lto = true
 strip = true
