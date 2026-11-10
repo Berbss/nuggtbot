@@ -1,3 +1,7 @@
+// Desktop (tray) builds on Windows are GUI apps: no console window. Headless/
+// server builds (no `tray` feature) keep the console subsystem.
+#![cfg_attr(all(windows, feature = "tray"), windows_subsystem = "windows")]
+
 mod action;
 mod auth;
 mod chat;
@@ -30,20 +34,66 @@ mod tray;
 use std::sync::Arc;
 use tokio::sync::{broadcast, mpsc, Mutex};
 
-fn main() -> anyhow::Result<()> {
-    tracing_subscriber::fmt()
-        .with_env_filter(
-            tracing_subscriber::EnvFilter::try_from_default_env()
-                .unwrap_or_else(|_| "nuggtbot=info".into()),
-        )
-        .init();
+/// Per-user data dir for the desktop (tray) build: `%APPDATA%\nuggtbot` on Windows,
+/// `$XDG_DATA_HOME/nuggtbot` (default `~/.local/share/nuggtbot`) elsewhere.
+/// `NUGGTBOT_HOME` overrides it. Config, data, secrets, plugins and the log live
+/// here, so the app works no matter where the .exe/AppImage was launched from.
+#[cfg(feature = "tray")]
+fn desktop_data_dir() -> Option<std::path::PathBuf> {
+    use std::path::PathBuf;
+    if let Some(p) = std::env::var_os("NUGGTBOT_HOME") {
+        return Some(PathBuf::from(p));
+    }
+    #[cfg(windows)]
+    let base = std::env::var_os("APPDATA").map(PathBuf::from);
+    #[cfg(not(windows))]
+    let base = std::env::var_os("XDG_DATA_HOME")
+        .map(PathBuf::from)
+        .or_else(|| std::env::var_os("HOME").map(|h| PathBuf::from(h).join(".local/share")));
+    base.map(|b| b.join("nuggtbot"))
+}
 
+/// Log to `nuggtbot.log` in the data dir when there is no console (tray mode);
+/// otherwise log to stderr. shortcut: the log file is append-only and never rotated,
+/// add rotation if it grows large.
+fn init_logging(to_file: bool) {
+    let filter = tracing_subscriber::EnvFilter::try_from_default_env()
+        .unwrap_or_else(|_| "nuggtbot=info".into());
+    let builder = tracing_subscriber::fmt().with_env_filter(filter);
+    if to_file {
+        if let Ok(f) = std::fs::OpenOptions::new().create(true).append(true).open("nuggtbot.log") {
+            builder.with_ansi(false).with_writer(std::sync::Mutex::new(f)).init();
+            return;
+        }
+    }
+    builder.init();
+}
+
+fn main() -> anyhow::Result<()> {
     // --headless (or NUGGTBOT_HEADLESS) forces server-only mode (systemd/servers).
     let headless = std::env::args().any(|a| a == "--headless")
         || std::env::var_os("NUGGTBOT_HEADLESS").is_some();
 
     #[cfg(feature = "tray")]
-    if !headless && tray::display_available() {
+    let tray_mode = !headless && tray::display_available();
+    #[cfg(not(feature = "tray"))]
+    let tray_mode = {
+        let _ = headless; // only the tray build branches on it
+        false
+    };
+
+    #[cfg(feature = "tray")]
+    if tray_mode {
+        // Everything relative (config.toml, data.json, plugins/, ...) now resolves here.
+        if let Some(dir) = desktop_data_dir() {
+            std::fs::create_dir_all(&dir)?;
+            std::env::set_current_dir(&dir)?;
+        }
+    }
+    init_logging(tray_mode);
+
+    #[cfg(feature = "tray")]
+    if tray_mode {
         // Run the async app on a background thread; the tray owns the main thread.
         let bind = config::Config::load("config.toml")
             .map(|c| c.bind)
@@ -60,7 +110,6 @@ fn main() -> anyhow::Result<()> {
         tray::run(url); // blocks on the main thread; exits the process on Quit
         return Ok(());
     }
-    let _ = headless;
     run_server_blocking()
 }
 

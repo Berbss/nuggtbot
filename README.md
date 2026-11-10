@@ -98,7 +98,10 @@ Download the `.exe` (Windows), `.AppImage` (Linux), or the archive for your OS
 from the [Releases](https://github.com/Berbss/nuggtbot/releases) page. The desktop
 build shows the nuggtbot logo in the **system tray**: **left-click** opens the web
 panel in your browser; **right-click** gives a menu with **Open panel** and
-**Quit**. Pass `--headless` (or set `NUGGTBOT_HEADLESS=1`) to run server-only.
+**Quit**. It runs in the background with no console or taskbar window, and keeps
+its config, data, plugins and a `nuggtbot.log` in `%APPDATA%\nuggtbot` on Windows
+(`~/.local/share/nuggtbot` on Linux; override with `NUGGTBOT_HOME`). Pass
+`--headless` (or set `NUGGTBOT_HEADLESS=1`) to run server-only.
 
 ### ⚠️ YouTube — current limitations
 
@@ -229,7 +232,10 @@ Baixe o `.exe` (Windows), o `.AppImage` (Linux) ou o arquivo do seu sistema na
 página de [Releases](https://github.com/Berbss/nuggtbot/releases). A build de
 desktop mostra o logo do nuggtbot no **system tray**: **clique esquerdo** abre o
 painel web no navegador; **clique direito** abre um menu com **Open panel** e
-**Quit**. Use `--headless` (ou `NUGGTBOT_HEADLESS=1`) pra rodar só o servidor.
+**Quit**. Roda em segundo plano, sem console nem janela na barra de tarefas, e guarda
+config, dados, plugins e um `nuggtbot.log` em `%APPDATA%\nuggtbot` no Windows
+(`~/.local/share/nuggtbot` no Linux; mude com `NUGGTBOT_HOME`). Use `--headless`
+(ou `NUGGTBOT_HEADLESS=1`) pra rodar só o servidor.
 
 ### ⚠️ YouTube — limitações atuais
 
