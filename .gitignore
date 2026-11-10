@@ -1,0 +1,47 @@
+# Account credentials / OAuth tokens — NEVER commit.
+/secrets.json
+
+# Per-user process config (bind address = your own Tailscale/LAN setup).
+# Ship config.toml.example instead; never commit your real config.toml.
+/config.toml
+
+# Runtime state (your commands/timers/variables/quotes). No secrets — those are
+# in secrets.json — but it's your personal content. Store::load() falls back to
+# an empty store when it's absent, so a fresh clone starts clean. Remove this
+# line if you want to ship your command set as a starter.
+/data.json
+
+# Runtime state snapshots (old backups may still hold pre-split embedded creds).
+/backups/
+
+# Build + tooling output.
+/target/
+**/target/
+/graphify-out/
+
+# User assets / runtime data (optional; remove if you want to share them).
+/sounds/
+/images/
+
+# Dropped plugin libraries + their local config (hosts/tokens). The SDK and
+# example source under plugin-sdk/ are committed; built artifacts are not.
+plugins/*.so
+plugins/*.dll
+plugins/*.config.json
+
+# User-pasted chat overlay code (HTML/CSS/JS) — never commit the user's overlay.
+/overlay.json
+
+# Agent / editor tooling — keep the repo clean of local-only files.
+.claude/
+CLAUDE.md
+AGENTS.md
+.graphify*
+.vscode/
+.idea/
+.DS_Store
+*.swp
+
+# Internal planning / parity notes — not for the public repo.
+/PLAN.md
+/SB_PARITY.md
