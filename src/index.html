@@ -563,6 +563,7 @@
     <!-- APIs -->
     <div class="page" data-page="apis">
       <h1>APIs</h1><p class="sub">Credenciais de APIs de terceiros (doações/eventos). Guardadas em <code>secrets.json</code>.</p>
+      <div style="background:var(--gold-soft);border:1px solid var(--gold);color:#e6e6e6;border-radius:8px;padding:10px 12px;margin:0 0 14px;font-size:13px">🚧 Work in progress — these API integrations aren't functional yet. The fields save, but nothing connects or runs.</div>
       <section class="card">
         <div class="platform-title creds-toggle" onclick="this.parentElement.classList.toggle('creds-open')"><span class="caret">▸</span><span class="pbrand" style="color:#19d27c"><svg class="plogo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><path d="M12 16s-3.2-2-3.2-4.3A1.8 1.8 0 0 1 12 10a1.8 1.8 0 0 1 3.2 1.7C15.2 14 12 16 12 16z" fill="currentColor" stroke="none"/></svg>LivePix</span> <span style="font-weight:400;color:#6a6a73;font-size:12px">— credenciais</span></div>
         <div class="creds">
@@ -1549,6 +1550,7 @@ async function loadIntegrations(){ let arr; try{ arr=await j('GET','/api/integra
 // omitted. I18N_PAIRS_FILL_START / _END mark the auto-generated table.
 const I18N_PAIRS = [
 /* I18N_PAIRS_FILL_START */
+["🚧 Work in progress — these API integrations aren't functional yet. The fields save, but nothing connects or runs.","🚧 Em desenvolvimento — estas integrações de API ainda não funcionam. Os campos salvam, mas nada conecta ou executa."],
   // nav / sections
   ["Overview","Visão geral"],
   ["Live chat","Chat ao vivo"],

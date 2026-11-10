@@ -113,6 +113,14 @@ expires the **refresh token every 7 days** — so the YouTube connection drops a
 you must log in again roughly once a week. Twitch and Kick are not affected. If
 no YouTube live is open, YouTube chat actions are simply skipped.
 
+### 🚧 API integrations — not ready yet
+
+The extra **API** cards (LivePix, Streamlabs, StreamElements) are **work in
+progress**: the credential fields exist and save to `secrets.json`, but nothing
+is wired up yet — they don't connect, authenticate, or trigger anything, and are
+untested. Only Twitch, Kick and YouTube are functional. The APIs tab shows a
+"work in progress" banner for this reason.
+
 ### ⚠️ Security
 
 The web panel has **no authentication** and is only safe **behind a private network such as
@@ -236,6 +244,14 @@ expira o **refresh token a cada 7 dias** — então a conexão com o YouTube cai
 precisa logar de novo cerca de uma vez por semana. Twitch e Kick não são afetados.
 Se não houver live do YouTube aberta, as ações de chat do YouTube são apenas
 ignoradas.
+
+### 🚧 Integrações de API — ainda não prontas
+
+Os cards extras de **API** (LivePix, Streamlabs, StreamElements) estão **em
+desenvolvimento**: os campos de credencial existem e salvam em `secrets.json`, mas
+nada está ligado ainda — não conectam, não autenticam, não disparam nada, e não
+foram testados. Só Twitch, Kick e YouTube funcionam. Por isso a aba APIs mostra um
+aviso "work in progress".
 
 ### ⚠️ Segurança
 
