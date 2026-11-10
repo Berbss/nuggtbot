@@ -45,3 +45,6 @@ AGENTS.md
 # Internal planning / parity notes — not for the public repo.
 /PLAN.md
 /SB_PARITY.md
+
+# Private custom plugin source (not for the public repo).
+/plugin-sdk/orbital-example/
