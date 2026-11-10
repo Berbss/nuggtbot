@@ -1,8 +1,6 @@
 <p align="center">
-  <img src="assets/logo.svg" width="128" height="128" alt="nuggtbot logo">
+  <img src="assets/logo-banner.svg" width="520" alt="nuggtbot">
 </p>
-
-<h1 align="center">nuggtbot</h1>
 
 <p align="center">
   A lightweight, headless re-implementation of <a href="https://streamer.bot">Streamer.bot</a> in Rust — for Linux and Windows.
