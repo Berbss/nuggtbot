@@ -667,12 +667,18 @@ struct KickCb {
     error: String,
 }
 
+/// Escape untrusted text before putting it into an HTML error page (callbacks
+/// reflect provider-supplied error strings).
+fn html_escape(s: &str) -> String {
+    s.replace('&', "&amp;").replace('<', "&lt;").replace('>', "&gt;").replace('"', "&quot;").replace('\'', "&#39;")
+}
+
 async fn kick_callback(
     State(st): State<AppState>,
     axum::extract::Query(q): axum::extract::Query<KickCb>,
 ) -> impl IntoResponse {
     if !q.error.is_empty() {
-        return Html(format!("<p>Kick login failed: {}</p><a href=\"/\">back</a>", q.error));
+        return Html(format!("<p>Kick login failed: {}</p><a href=\"/\">back</a>", html_escape(&q.error)));
     }
     let pending = { st.kick_pending.lock().await.clone() };
     let Some(pending) = pending else {
@@ -690,7 +696,7 @@ async fn kick_callback(
             *st.kick_pending.lock().await = None;
             Html("<p>Kick logged in. You may close this tab.</p><script>location.href='/'</script>".to_string())
         }
-        Err(e) => Html(format!("<p>Kick token exchange failed: {e}</p><a href=\"/\">back</a>")),
+        Err(e) => Html(format!("<p>Kick token exchange failed: {}</p><a href=\"/\">back</a>", html_escape(&e.to_string()))),
     }
 }
 
@@ -716,7 +722,7 @@ async fn youtube_callback(
     axum::extract::Query(q): axum::extract::Query<KickCb>,
 ) -> impl IntoResponse {
     if !q.error.is_empty() {
-        return Html(format!("<p>YouTube login failed: {}</p><a href=\"/\">back</a>", q.error));
+        return Html(format!("<p>YouTube login failed: {}</p><a href=\"/\">back</a>", html_escape(&q.error)));
     }
     let pending = { st.yt_pending.lock().await.clone() };
     let Some(pending) = pending else {
@@ -734,7 +740,7 @@ async fn youtube_callback(
             *st.yt_pending.lock().await = None;
             Html("<p>YouTube logged in. You may close this tab.</p><script>location.href='/'</script>".to_string())
         }
-        Err(e) => Html(format!("<p>YouTube token exchange failed: {e}</p><a href=\"/\">back</a>")),
+        Err(e) => Html(format!("<p>YouTube token exchange failed: {}</p><a href=\"/\">back</a>", html_escape(&e.to_string()))),
     }
 }
 
@@ -1031,8 +1037,9 @@ async fn upload_image(
         return Json(serde_json::json!({ "ok": false, "error": "bad name" }));
     };
     let ext: String = q.ext.chars().filter(|c| c.is_ascii_alphanumeric()).take(8).collect();
-    if ext.is_empty() {
-        return Json(serde_json::json!({ "ok": false, "error": "bad ext" }));
+    // Raster only: an uploaded SVG served same-origin could run script (stored XSS).
+    if !matches!(ext.to_lowercase().as_str(), "png" | "jpg" | "jpeg" | "gif" | "webp" | "avif") {
+        return Json(serde_json::json!({ "ok": false, "error": "image type not allowed (png/jpg/gif/webp/avif)" }));
     }
     if let Err(e) = std::fs::create_dir_all(IMAGES_DIR) {
         return Json(serde_json::json!({ "ok": false, "error": e.to_string() }));
@@ -1085,7 +1092,7 @@ fn remove_image(sound: &str) {
 
 async fn serve_image(Path(name): Path<String>) -> impl IntoResponse {
     let Some(name) = safe_name(&name) else {
-        return (axum::http::StatusCode::BAD_REQUEST, [("content-type", "text/plain")], Vec::new());
+        return (axum::http::StatusCode::BAD_REQUEST, [("content-type", "text/plain"), ("x-content-type-options", "nosniff")], Vec::new());
     };
     match std::fs::read(format!("{IMAGES_DIR}/{name}")) {
         Ok(bytes) => {
@@ -1094,13 +1101,13 @@ async fn serve_image(Path(name): Path<String>) -> impl IntoResponse {
                 "jpg" | "jpeg" => "image/jpeg",
                 "gif" => "image/gif",
                 "webp" => "image/webp",
-                "svg" => "image/svg+xml",
                 "avif" => "image/avif",
                 _ => "application/octet-stream",
             };
-            (axum::http::StatusCode::OK, [("content-type", ct)], bytes)
+            // nosniff so the browser won't reinterpret a stored file as active content.
+            (axum::http::StatusCode::OK, [("content-type", ct), ("x-content-type-options", "nosniff")], bytes)
         }
-        Err(_) => (axum::http::StatusCode::NOT_FOUND, [("content-type", "text/plain")], Vec::new()),
+        Err(_) => (axum::http::StatusCode::NOT_FOUND, [("content-type", "text/plain"), ("x-content-type-options", "nosniff")], Vec::new()),
     }
 }
 
