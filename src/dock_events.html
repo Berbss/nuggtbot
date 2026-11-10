@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Events Dock</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<style>
+  /* Events feed (subs, rewards, bits, raids, follows…), Streamer.bot-feed style. */
+  :root{
+    --fs-chat:16px; --fs-ui:15px;
+    --bg:#0c0c0e; --panel:#19191d; --row:#1d1d22; --border:#2a2a30;
+    --text:#e9e9ec; --muted:#9a9aa3; --gold:#f0a81e; --gold-soft:rgba(240,168,30,.14);
+    --twitch:#a970ff; --kick:#53fb18; --youtube:#ff4d4d;
+    --sub:#a970ff; --bits:#f0a81e; --raid:#38bdf8; --follow:#53fb18; --reward:#60a5fa; --hype:#ff5ea8; --misc:#9a9aa3;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; height:100%; }
+  body{ background:var(--bg); color:var(--text); display:flex; flex-direction:column;
+    font-family:"DM Sans",system-ui,sans-serif; font-size:var(--fs-ui); line-height:1.5; -webkit-font-smoothing:antialiased; }
+  #top{ display:flex; align-items:center; gap:8px; padding:8px 12px; border-bottom:1px solid var(--border); background:var(--panel); }
+  #top .title{ font-weight:700; letter-spacing:.02em; }
+  #top .title b{ color:var(--gold); }
+  .iconbtn{ margin-left:auto; background:transparent; border:0; border-radius:8px; padding:7px 10px; cursor:pointer; color:var(--muted); display:flex; align-items:center; }
+  .iconbtn svg{ width:20px; height:20px; display:block; }
+  .iconbtn:hover{ background:var(--row); color:var(--text); }
+  .iconbtn.active{ color:var(--gold); background:var(--gold-soft); }
+  #settings{ display:none; position:fixed; top:48px; right:10px; z-index:10; background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:10px 12px; box-shadow:0 10px 30px rgba(0,0,0,.55); min-width:230px; }
+  #settings.open{ display:block; }
+  .setrow{ display:flex; align-items:center; justify-content:space-between; gap:14px; padding:6px 0; }
+  .setrow span:first-child{ color:var(--muted); font-size:.9em; }
+  .stepper{ display:flex; align-items:center; gap:6px; }
+  .stepper b{ min-width:26px; text-align:center; font-variant-numeric:tabular-nums; }
+  .stepper button{ background:#242429; color:var(--text); border:0; border-radius:6px; padding:4px 9px; font-weight:600; cursor:pointer; }
+  #log{ flex:1; overflow-y:auto; padding:10px 12px; font-size:var(--fs-chat); scrollbar-width:thin; scrollbar-color:#2a2a30 transparent; }
+  .ev{ display:flex; gap:10px; align-items:flex-start; padding:9px 11px; margin:6px 0; background:var(--panel); border:1px solid var(--border); border-left:3px solid var(--misc); border-radius:8px; }
+  .ev .evicon{ flex:0 0 auto; width:1.5em; height:1.5em; color:var(--misc); margin-top:.1em; }
+  .ev .evicon svg{ width:100%; height:100%; display:block; }
+  .evbody{ min-width:0; flex:1; }
+  .evhead{ display:flex; align-items:baseline; gap:7px; flex-wrap:wrap; }
+  .evlabel{ font-size:.72em; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--misc); }
+  .pdot{ width:.7em; height:.7em; flex:0 0 auto; align-self:center; }
+  .evuser{ font-weight:700; }
+  .evtext{ color:var(--text); opacity:.92; word-break:break-word; }
+  /* per-type accent */
+  .ev.t-sub{ border-left-color:var(--sub); } .ev.t-sub .evicon,.ev.t-sub .evlabel{ color:var(--sub); }
+  .ev.t-bits{ border-left-color:var(--bits); } .ev.t-bits .evicon,.ev.t-bits .evlabel{ color:var(--bits); }
+  .ev.t-raid{ border-left-color:var(--raid); } .ev.t-raid .evicon,.ev.t-raid .evlabel{ color:var(--raid); }
+  .ev.t-follow{ border-left-color:var(--follow); } .ev.t-follow .evicon,.ev.t-follow .evlabel{ color:var(--follow); }
+  .ev.t-reward{ border-left-color:var(--reward); } .ev.t-reward .evicon,.ev.t-reward .evlabel{ color:var(--reward); }
+  .ev.t-hype{ border-left-color:var(--hype); } .ev.t-hype .evicon,.ev.t-hype .evlabel{ color:var(--hype); }
+  .pdot.twitch{ color:var(--twitch); } .pdot.kick{ color:var(--kick); } .pdot.youtube{ color:var(--youtube); }
+</style>
+</head>
+<body>
+  <div id="top">
+    <span class="title">nuge<b>bot</b> · Eventos</span>
+    <button class="iconbtn" id="gear" title="Configurações"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 13a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1V21a2 2 0 0 1-4 0v-.1A1.6 1.6 0 0 0 7 19.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.6 1.6 0 0 0 3 13H3a2 2 0 0 1 0-4h.1A1.6 1.6 0 0 0 4.6 7L4.5 7a2 2 0 1 1 2.8-2.8l.1.1A1.6 1.6 0 0 0 10 4.6V4.5a2 2 0 0 1 4 0V4.6a1.6 1.6 0 0 0 2.7 1.1l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8v.1a1.6 1.6 0 0 0 1.5 1H21a2 2 0 0 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1z"/></svg></button>
+  </div>
+  <div id="settings">
+    <div class="setrow"><span>Texto</span><span class="stepper"><button id="chat-d">A-</button><b id="chat-v">16</b><button id="chat-u">A+</button></span></div>
+    <div class="setrow"><span>Tamanho da UI</span><span class="stepper"><button id="ui-d">A-</button><b id="ui-v">15</b><button id="ui-u">A+</button></span></div>
+  </div>
+  <div id="log"></div>
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+const log=$('log');
+const atBottom=()=>log.scrollHeight-log.scrollTop-log.clientHeight<40;
+
+// Settings: text + UI size, remembered per browser.
+function sizeControl(key,cssVar,def,min,max,step,valEl,downEl,upEl){
+  let n=def; try{ n=Number(localStorage.getItem(key))||def; }catch(_){}
+  const set=v=>{ n=Math.min(max,Math.max(min,v)); document.documentElement.style.setProperty(cssVar,n+'px'); $(valEl).textContent=n; try{ localStorage.setItem(key,n); }catch(_){} };
+  set(n); $(downEl).onclick=()=>set(n-step); $(upEl).onclick=()=>set(n+step); }
+sizeControl('dock-fs-chat','--fs-chat',16,10,40,2,'chat-v','chat-d','chat-u');
+sizeControl('dock-fs-ui','--fs-ui',15,11,24,1,'ui-v','ui-d','ui-u');
+$('gear').onclick=e=>{ e.stopPropagation(); const s=$('settings'); const open=s.classList.toggle('open'); $('gear').classList.toggle('active',open); };
+document.addEventListener('click',e=>{ if(!$('settings').contains(e.target)&&e.target!==$('gear')){ $('settings').classList.remove('open'); $('gear').classList.remove('active'); } });
+
+// icons per category
+const ICON={
+  sub:'<path fill="currentColor" d="M12 2.5 15 9l7 .6-5.3 4.6L18.3 21 12 17.3 5.7 21l1.6-6.8L2 9.6 9 9z"/>',
+  bits:'<path fill="currentColor" d="M12 2 4 7v10l8 5 8-5V7l-8-5zm0 3.2L17 8v8l-5 3.1L7 16V8l5-2.8z"/>',
+  raid:'<path fill="currentColor" d="M3 11h8V3l10 9-10 9v-8H3z"/>',
+  follow:'<path fill="currentColor" d="M12 21s-7-4.5-9.3-9A5 5 0 0 1 12 6a5 5 0 0 1 9.3 6C19 16.5 12 21 12 21z"/>',
+  reward:'<path fill="currentColor" d="M20 7h-2.2a3 3 0 0 0-5.8-1 3 3 0 0 0-5.8 1H4a1 1 0 0 0-1 1v3h18V8a1 1 0 0 0-1-1zM4 13v7a1 1 0 0 0 1 1h6v-8H4zm9 8h6a1 1 0 0 0 1-1v-7h-7v8z"/>',
+  hype:'<path fill="currentColor" d="M12 2c1 4-2 5-2 8a2 2 0 0 0 4 0c2 2 3 4 3 6a5 5 0 0 1-10 0c0-5 5-6 5-14z"/>',
+  misc:'<path fill="currentColor" d="M18 16V11a6 6 0 0 0-5-5.9V4a1 1 0 0 0-2 0v1.1A6 6 0 0 0 6 11v5l-2 2v1h16v-1l-2-2zm-6 6a2 2 0 0 0 2-2h-4a2 2 0 0 0 2 2z"/>',
+};
+const PDOT={
+  twitch:'<svg class="pdot twitch" viewBox="0 0 24 24"><path fill="currentColor" d="M4 3 3 6.5V18h4v2.5L9.5 18H13l5-5V3H4z"/></svg>',
+  kick:'<svg class="pdot kick" viewBox="0 0 24 24"><path fill="currentColor" d="M3 3h5v4h2V5h2V3h6v6h-2v2h-2v2h2v2h2v6h-6v-2h-2v-2H8v4H3z"/></svg>',
+  youtube:'<svg class="pdot youtube" viewBox="0 0 24 24"><path fill="currentColor" d="M22.5 7.1a2.6 2.6 0 0 0-1.8-1.8C19 4.8 12 4.8 12 4.8s-7 0-8.7.5A2.6 2.6 0 0 0 1.5 7.1 27 27 0 0 0 1 12a27 27 0 0 0 .5 4.9 2.6 2.6 0 0 0 1.8 1.8c1.7.5 8.7.5 8.7.5s7 0 8.7-.5a2.6 2.6 0 0 0 1.8-1.8A27 27 0 0 0 23 12a27 27 0 0 0-.5-4.9zM9.8 15.3V8.7l5.7 3.3z"/></svg>',
+};
+
+// Classify a Notice {kind,text} into a display type + label + platform guess.
+function classify(kind,text){
+  const k=(kind||'').toLowerCase(), t=(text||'').toLowerCase();
+  let plat='twitch';
+  if(k.startsWith('kick')||t.startsWith('kick reward')) plat='kick';
+  else if(k.startsWith('youtube')||k.includes('superchat')||k.includes('member')) plat='youtube';
+  let type='misc', label=(kind||'EVENTO').toUpperCase();
+  if(k==='cheer'||k.includes('bits')){ type='bits'; label='BITS'; }
+  else if(k.includes('superchat')){ type='bits'; label='SUPERCHAT'; }
+  else if(k==='raid'){ type='raid'; label='RAID'; }
+  else if(k==='follow'){ type='follow'; label='SEGUIDOR'; }
+  else if(t.startsWith('redeemed:')||t.startsWith('kick reward')||t.includes('reward')){ type='reward'; label='RECOMPENSA'; }
+  else if(k.includes('member')){ type='sub'; label='MEMBRO'; }
+  else if(k.includes('gift')){ type='sub'; label='SUB PRESENTE'; }
+  else if(k.includes('sub')){ type='sub'; label='SUB'; }
+  else if(k.startsWith('hypetrain')){ type='hype'; label='HYPE TRAIN'; }
+  else if(k.includes('poll')){ label='ENQUETE'; }
+  else if(k.includes('prediction')){ label='PREDIÇÃO'; }
+  else if(k.includes('goal')){ label='META'; }
+  else if(k==='clipcreated'){ label='CLIPE'; }
+  else if(k==='channelupdate'){ label='CANAL'; }
+  else if(k==='startup'){ type='misc'; label='SISTEMA'; }
+  return {type,label,plat};
+}
+
+function el(t,c,txt){ const e=document.createElement(t); if(c)e.className=c; if(txt!==undefined)e.textContent=txt; return e; }
+
+function addEvent(ev){ if(!ev||ev.type!=='notice')return; const stick=atBottom();
+  const c=classify(ev.kind,ev.text);
+  const row=el('div','ev t-'+c.type);
+  const ic=el('span','evicon'); ic.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true">'+(ICON[c.type]||ICON.misc)+'</svg>'; row.append(ic);
+  const body=el('div','evbody');
+  const head=el('div','evhead');
+  if(PDOT[c.plat]){ const w=el('span'); w.innerHTML=PDOT[c.plat]; head.append(w.firstChild); }
+  head.append(el('span','evlabel',c.label));
+  if(ev.user)head.append(el('span','evuser',ev.user));
+  body.append(head);
+  if(ev.text)body.append(el('div','evtext',ev.text));
+  row.append(body);
+  log.append(row); while(log.children.length>200)log.firstChild.remove();
+  if(stick)log.scrollTop=log.scrollHeight; }
+
+// feed: /ws streams every Event; we keep only Notices.
+function connect(){ const proto=location.protocol==='https:'?'wss':'ws';
+  const ws=new WebSocket(proto+'://'+location.host+'/ws');
+  ws.onmessage=e=>{ try{ addEvent(JSON.parse(e.data)); }catch(_){} };
+  ws.onclose=()=>setTimeout(connect,2000); }
+connect();
+</script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+[package]
+name = "plugin-sdk"
+version = "0.1.0"
+edition = "2021"
+description = "Helpers + macro to build a nuggtbot dynamic plugin (.so/.dll)."
+
+[dependencies]
+serde_json = "1"

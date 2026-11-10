@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="128" height="128" role="img" aria-label="nuggtbot logo">
+  <defs><radialGradient id="ng" cx="36%" cy="30%" r="82%">
+    <stop offset="0" stop-color="#ffd874"/><stop offset=".55" stop-color="#f0a81e"/><stop offset="1" stop-color="#c47e0d"/>
+  </radialGradient></defs>
+  <path d="M21 8c9-5.5 23-3.5 29 6 3.5 5.5 4 7 8 11 4.5 4.5 3.5 12-3 17-5.5 4.2-9 7-17 8.5C28 59 16 56 9 47 3 39 3 28 8 19c3-5.5 6-7.5 13-11z" fill="url(#ng)" stroke="#9a640b" stroke-width="2.6" stroke-linejoin="round"/>
+  <circle cx="24" cy="25" r="2.3" fill="#9a640b" opacity=".65"/><circle cx="37" cy="21" r="1.8" fill="#9a640b" opacity=".55"/>
+  <circle cx="43" cy="34" r="2" fill="#9a640b" opacity=".6"/><circle cx="29" cy="38" r="1.7" fill="#9a640b" opacity=".5"/>
+  <circle cx="35" cy="47" r="1.9" fill="#9a640b" opacity=".55"/><circle cx="18" cy="34" r="1.6" fill="#9a640b" opacity=".45"/>
+</svg>

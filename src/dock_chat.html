@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Chat Dock</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<style>
+  /* Clean inline chat, Streamer.bot-feed style: DM Sans 16px, platform icon +
+     badges + colored name + message. Dark panel tokens from the web panel. */
+  :root{
+    --fs-chat:16px; --fs-ui:15px;
+    --bg:#0c0c0e; --panel:#19191d; --row:#1d1d22; --border:#2a2a30;
+    --text:#e9e9ec; --muted:#9a9aa3; --gold:#f0a81e; --gold-soft:rgba(240,168,30,.14);
+    --input:#0f0f12;
+    --twitch:#a970ff; --kick:#53fb18; --youtube:#ff4d4d;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; height:100%; }
+  body{ background:var(--bg); color:var(--text); display:flex; flex-direction:column;
+    font-family:"DM Sans",system-ui,sans-serif; font-size:var(--fs-ui); line-height:1.5; -webkit-font-smoothing:antialiased; }
+  #log{ flex:1; overflow-y:auto; padding:8px 12px; font-size:var(--fs-chat); scrollbar-width:thin; scrollbar-color:#2a2a30 transparent; }
+  .row{ display:flex; align-items:baseline; flex-wrap:wrap; gap:0 2px; padding:4px 8px; margin:1px 0; border-radius:6px; transition:background .1s ease; }
+  .row:hover{ background:var(--row); }
+  .row.deleted{ opacity:.35; text-decoration:line-through; text-decoration-color:rgba(255,255,255,.2); }
+  .pico{ width:1em; height:1em; flex:0 0 auto; align-self:center; margin-right:5px; }
+  .pico.twitch{ color:var(--twitch); } .pico.kick{ color:var(--kick); } .pico.youtube{ color:var(--youtube); }
+  .badge{ height:1.15em; align-self:center; vertical-align:-.2em; margin-right:3px; border-radius:3px; }
+  .emote{ height:1.5em; align-self:center; vertical-align:-.35em; margin:0 1px; }
+  .name{ font-weight:700; }
+  .name.clk{ cursor:pointer; } .name.clk:hover{ text-decoration:underline; }
+  .colon{ margin-right:5px; opacity:.5; }
+  .text{ word-break:break-word; }
+  /* platform tabs (top) — Streamer.bot style: leftmost = all, then one per connected platform */
+  #tabs{ display:flex; gap:6px; padding:8px 10px; border-bottom:1px solid var(--border); background:var(--panel); }
+  .tab{ background:transparent; border:0; border-radius:8px; padding:7px 12px; cursor:pointer; color:var(--muted); display:flex; align-items:center; }
+  .tab svg{ width:20px; height:20px; display:block; }
+  .tab:hover{ background:var(--row); }
+  .tab.t-twitch{ color:var(--twitch); } .tab.t-kick{ color:var(--kick); } .tab.t-youtube{ color:var(--youtube); }
+  .tab.active{ background:var(--gold-soft); box-shadow:inset 0 -2px 0 var(--gold); }
+  .tab.t-all.active{ color:var(--gold); }
+  .iconbtn{ margin-left:auto; background:transparent; border:0; border-radius:8px; padding:7px 10px; cursor:pointer; color:var(--muted); display:flex; align-items:center; }
+  .iconbtn svg{ width:20px; height:20px; display:block; }
+  .iconbtn:hover{ background:var(--row); color:var(--text); }
+  .iconbtn.active{ color:var(--gold); background:var(--gold-soft); }
+  #settings{ display:none; position:fixed; top:48px; right:10px; z-index:10; background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:10px 12px; box-shadow:0 10px 30px rgba(0,0,0,.55); min-width:230px; }
+  #settings.open{ display:block; }
+  .setrow{ display:flex; align-items:center; justify-content:space-between; gap:14px; padding:6px 0; }
+  .setrow span:first-child{ color:var(--muted); font-size:.9em; }
+  .stepper{ display:flex; align-items:center; gap:6px; }
+  .stepper b{ min-width:26px; text-align:center; font-variant-numeric:tabular-nums; }
+  .stepper button{ background:#242429; color:var(--text); border:0; border-radius:6px; padding:4px 9px; font-weight:600; cursor:pointer; }
+  /* feed filter: show only the selected platform's rows */
+  #log[data-filter="twitch"] .row:not([data-platform="twitch"]),
+  #log[data-filter="kick"] .row:not([data-platform="kick"]),
+  #log[data-filter="youtube"] .row:not([data-platform="youtube"]){ display:none; }
+  /* bar */
+  #res{ font-size:.8em; min-height:1.1em; color:var(--muted); padding:2px 12px 0; }
+  #bar{ display:flex; gap:7px; padding:9px 12px; border-top:1px solid var(--border); background:var(--panel); align-items:center; flex-wrap:wrap; }
+  #bar input[type=text]{ flex:1 1 170px; min-width:120px; background:var(--input); color:var(--text); border:1px solid var(--border); border-radius:8px; padding:8px 11px; font:inherit; transition:border-color .12s ease, box-shadow .12s ease; }
+  #bar input[type=text]:focus-visible{ outline:0; border-color:var(--gold); box-shadow:0 0 0 3px var(--gold-soft); }
+  .tgl{ display:flex; align-items:center; gap:5px; font-size:.9em; color:var(--muted); cursor:pointer; user-select:none; }
+  button{ background:var(--gold); color:#201604; border:0; border-radius:8px; padding:8px 14px; font:inherit; font-weight:700; cursor:pointer; }
+  #fs{ display:flex; gap:4px; }
+  #fs button{ padding:5px 9px; background:#242429; color:var(--text); font-weight:600; }
+  #menu{ position:fixed; display:none; background:var(--panel); border:1px solid var(--border); border-radius:10px; min-width:160px; z-index:9; box-shadow:0 10px 30px rgba(0,0,0,.55); overflow:hidden; }
+  #menu .h{ padding:8px 13px; color:var(--muted); font-size:.82em; border-bottom:1px solid var(--border); }
+  #menu .i{ padding:9px 14px; cursor:pointer; }
+  #menu .i:hover{ background:var(--row); }
+  #menu .i.danger:hover{ background:rgba(231,76,60,.16); color:#ff6b5e; }
+</style>
+</head>
+<body>
+  <div id="tabs">
+    <button class="tab t-all active" data-sel="all" title="Todos os chats"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><path d="M12 3 3 7.5l9 4.5 9-4.5L12 3zM3 12l9 4.5L21 12M3 16.5 12 21l9-4.5"/></svg></button>
+    <button class="iconbtn" id="gear" title="Configurações"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 13a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1V21a2 2 0 0 1-4 0v-.1A1.6 1.6 0 0 0 7 19.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.6 1.6 0 0 0 3 13H3a2 2 0 0 1 0-4h.1A1.6 1.6 0 0 0 4.6 7L4.5 7a2 2 0 1 1 2.8-2.8l.1.1A1.6 1.6 0 0 0 10 4.6V4.5a2 2 0 0 1 4 0V4.6a1.6 1.6 0 0 0 2.7 1.1l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8v.1a1.6 1.6 0 0 0 1.5 1H21a2 2 0 0 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1z"/></svg></button>
+  </div>
+  <div id="settings">
+    <div class="setrow"><span>Texto do chat</span><span class="stepper"><button id="chat-d">A-</button><b id="chat-v">16</b><button id="chat-u">A+</button></span></div>
+    <div class="setrow"><span>Tamanho da UI</span><span class="stepper"><button id="ui-d">A-</button><b id="ui-v">15</b><button id="ui-u">A+</button></span></div>
+  </div>
+  <div id="log" data-filter="all"></div>
+  <div id="res"></div>
+  <div id="bar">
+    <input id="text" type="text" placeholder="Enviar em todas…" autocomplete="off">
+    <button id="send">Enviar</button>
+  </div>
+  <div id="menu"></div>
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+const log=$('log'), menu=$('menu');
+const COLOR_RE=/^(#[0-9a-fA-F]{6}|hsl\(\d{1,3}, \d{1,3}%, \d{1,3}%\))$/;
+const atBottom=()=>log.scrollHeight-log.scrollTop-log.clientHeight<40;
+
+// Small platform glyphs (inline, 1em, tinted by CSS).
+const PICO={
+  twitch:'<path fill="currentColor" d="M4 3 3 6.5V18h4v2.5L9.5 18H13l5-5V3H4zm2 1.5h10.5v7.8L14 15H10.5L8 17.5V15H6V4.5zm3.5 2.6v4.3H11V7.1H9.5zm4 0v4.3H15V7.1h-1.5z"/>',
+  kick:'<path fill="currentColor" d="M3 3h5v4h2V5h2V3h6v6h-2v2h-2v2h2v2h2v6h-6v-2h-2v-2H8v4H3V3z"/>',
+  youtube:'<path fill="currentColor" d="M22.5 7.1a2.6 2.6 0 0 0-1.8-1.8C19 4.8 12 4.8 12 4.8s-7 0-8.7.5A2.6 2.6 0 0 0 1.5 7.1 27 27 0 0 0 1 12a27 27 0 0 0 .5 4.9 2.6 2.6 0 0 0 1.8 1.8c1.7.5 8.7.5 8.7.5s7 0 8.7-.5a2.6 2.6 0 0 0 1.8-1.8A27 27 0 0 0 23 12a27 27 0 0 0-.5-4.9zM9.8 15.3V8.7l5.7 3.3-5.7 3.3z"/>',
+};
+function picoSvg(p){ return PICO[p] ? '<svg class="pico '+p+'" viewBox="0 0 24 24" aria-hidden="true">'+PICO[p]+'</svg>' : ''; }
+
+// Settings: chat text size + UI size, each remembered per browser.
+function sizeControl(key,cssVar,def,min,max,step,valEl,downEl,upEl){
+  let n=def; try{ n=Number(localStorage.getItem(key))||def; }catch(_){}
+  const set=v=>{ n=Math.min(max,Math.max(min,v)); document.documentElement.style.setProperty(cssVar,n+'px'); $(valEl).textContent=n; try{ localStorage.setItem(key,n); }catch(_){} };
+  set(n); $(downEl).onclick=()=>set(n-step); $(upEl).onclick=()=>set(n+step); }
+sizeControl('dock-fs-chat','--fs-chat',16,10,40,2,'chat-v','chat-d','chat-u');
+sizeControl('dock-fs-ui','--fs-ui',15,11,24,1,'ui-v','ui-d','ui-u');
+// Gear toggles the settings panel.
+$('gear').onclick=e=>{ e.stopPropagation(); const s=$('settings'); const open=s.classList.toggle('open'); $('gear').classList.toggle('active',open); };
+document.addEventListener('click',e=>{ if(!$('settings').contains(e.target)&&e.target!==$('gear')){ $('settings').classList.remove('open'); $('gear').classList.remove('active'); } });
+
+function el(t,c,txt){ const e=document.createElement(t); if(c)e.className=c; if(txt!==undefined)e.textContent=txt; return e; }
+
+function addMessage(m){ if(!m)return; const stick=atBottom();
+  const row=el('div','row'); row.dataset.id=m.id||''; row.dataset.platform=m.platform||'';
+  if(PICO[m.platform]){ const w=el('span'); w.innerHTML=picoSvg(m.platform); row.append(w.firstChild); }
+  (m.badges||[]).forEach(u=>{ if(/^https:/.test(u)||/^\/badges\/kick\/[a-z_]+\.svg$/.test(u)){ const b=el('img','badge'); b.src=u; b.alt=''; row.append(b); } });
+  const name=el('span','name',m.from||'');
+  if(COLOR_RE.test(m.color||''))name.style.color=m.color;
+  if(m.platform==='twitch'||m.platform==='kick'){ name.classList.add('clk'); name.onclick=e=>showMenu(e,m,row); }
+  row.append(name, el('span','colon',':'));
+  const body=el('span','text');
+  (m.parts||[]).forEach(p=>{ if(p.type==='text')body.append(document.createTextNode(p.text));
+    else if(p.type==='emote'&&/^https:/.test(p.url)){ const i=el('img','emote'); i.src=p.url; i.alt=''; i.loading='lazy'; body.append(i); } });
+  row.append(body);
+  log.append(row); while(log.children.length>300)log.firstChild.remove();
+  if(stick)log.scrollTop=log.scrollHeight; }
+
+function markDeleted(id){ log.querySelectorAll('.row').forEach(r=>{ if(r.dataset.id===id)r.classList.add('deleted'); }); }
+
+// --- moderation ---
+function showMenu(e,m,row){ e.stopPropagation(); menu.innerHTML='';
+  const target=m.login||m.from; const mid=(m.id||'').split(':').slice(1).join(':');
+  menu.append(el('div','h',(m.from||'')+' · '+m.platform));
+  const add=(label,fn,danger)=>{ const d=el('div','i'+(danger?' danger':''),label); d.onclick=()=>{ menu.style.display='none'; fn(); }; menu.append(d); };
+  add('Banir', ()=>{ if(confirm('Banir '+target+' permanentemente?'))ban(m.platform,target,0); }, true);
+  [5,10,30,60].forEach(n=>add('Timeout '+n+' min', ()=>ban(m.platform,target,n)));
+  if(mid)add('Deletar mensagem', ()=>del(m.platform,mid,row), true);
+  menu.style.left=Math.min(e.clientX,innerWidth-170)+'px';
+  menu.style.top=Math.min(e.clientY,innerHeight-230)+'px'; menu.style.display='block'; }
+document.addEventListener('click',e=>{ if(menu.style.display==='block'&&!menu.contains(e.target))menu.style.display='none'; });
+
+async function post(path,body){ try{ const r=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}); return await r.json(); }catch(_){ return {ok:false,error:'rede'}; } }
+function result(t){ $('res').textContent=t; }
+async function ban(platform,login,duration){ const r=await post('/api/chat/ban',{platform,login,duration}); result(platform+' ban: '+(r.ok?'ok':('erro '+(r.error||'')))); }
+async function del(platform,id,row){ const r=await post('/api/chat/delete',{platform,id}); if(r.ok&&row)row.classList.add('deleted'); result(platform+' delete: '+(r.ok?'ok':('erro '+(r.error||'')))); }
+
+// --- composer ---
+// Tabs: "all" + one per connected platform. Selected tab filters the feed and
+// is the sole send target (all = every connected platform).
+const tabs=$('tabs');
+let sel='all', ready=[];
+function selectTab(s){ sel=s; $('log').dataset.filter=s;
+  tabs.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.sel===s));
+  $('text').placeholder = s==='all' ? 'Enviar em todas…' : ('Enviar no '+s+'…'); }
+tabs.querySelector('[data-sel="all"]').onclick=()=>selectTab('all');
+(async function(){ let s; try{ s=await (await fetch('/api/streaminfo/status')).json(); }catch(_){ return; }
+  const LBL={twitch:'Twitch',kick:'Kick',youtube:'YouTube'};
+  ['twitch','kick','youtube'].forEach(p=>{ if(!(s[p]&&s[p].ready))return; ready.push(p);
+    const b=document.createElement('button'); b.className='tab t-'+p; b.dataset.sel=p; b.title=LBL[p];
+    b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true">'+PICO[p]+'</svg>'; b.onclick=()=>selectTab(p);
+    tabs.insertBefore(b, $('gear')); }); })();
+
+async function send(){ const t=$('text'); const text=t.value.trim(); if(!text)return;
+  const targets = sel==='all' ? ready.slice() : [sel];
+  if(!targets.length){ result('nenhuma plataforma conectada'); return; }
+  $('send').disabled=true; const r=await post('/api/chat/send',{text,targets}); $('send').disabled=false;
+  const res=r.results||{};
+  // YouTube without an open live is ignored silently, not shown as an error.
+  const shown=targets.map(p=>({p,ok:!!(res[p]&&res[p].ok),err:(res[p]&&res[p].error)||r.error||''}))
+    .filter(x=>!(x.p==='youtube'&&/no active YouTube/i.test(x.err)));
+  result(shown.map(x=>x.p+': '+(x.ok?'ok':('erro '+x.err))).join(' · '));
+  if(shown.every(x=>x.ok))t.value=''; }
+$('send').onclick=send;
+$('text').addEventListener('keydown',e=>{ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); send(); } });
+
+// --- feed (SSE, reconnects on its own) ---
+const parse=fn=>e=>{ try{ fn(JSON.parse(e.data)); }catch(_){} };
+const src=new EventSource('/events');
+src.addEventListener('message', parse(addMessage));
+src.addEventListener('delete', parse(d=>markDeleted(d.id)));
+src.addEventListener('clear', parse(()=>log.innerHTML=''));
+</script>
+</body>
+</html>

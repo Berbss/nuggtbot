@@ -1,0 +1,14 @@
+# nuggtbot process config. Copy to config.toml and edit.
+# Account credentials are set in the web UI (Accounts tab), not here.
+#
+# `bind` is the address the web UI + API listen on. It has NO auth yet, so the
+# safe default is localhost only. To reach the panel/docks/overlay from OBS on
+# another machine, put this host on Tailscale and set your own address here
+# (e.g. "100.x.y.z:7777" or "0.0.0.0:7777" behind Tailscale). Never expose
+# 0.0.0.0 on an untrusted network, and do not use Tailscale Funnel for the panel.
+bind = "127.0.0.1:7777"
+data_file = "data.json"
+
+# Public Kick webhook listener (only this one is meant to be exposed, via
+# Tailscale Funnel). Defaults to localhost if omitted.
+# webhook_bind = "127.0.0.1:7778"

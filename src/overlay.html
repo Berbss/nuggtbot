@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>nuggtbot overlay</title>
+<style>html,body{margin:0;background:transparent;overflow:hidden;font-family:system-ui,sans-serif;color:#0f0}
+#img{position:fixed;inset:0;width:100%;height:100%;object-fit:fill;display:none;opacity:0}
+/* Hard cut in, fade out to transparent over 4s total. */
+#img.show{display:block;opacity:0;animation:sndimg 4s linear forwards}
+@keyframes sndimg{0%{opacity:1}100%{opacity:0}}</style>
+</head>
+<body>
+<img id="img" alt="">
+<div id="log" style="position:fixed;bottom:4px;left:4px;font-size:11px;opacity:.5"></div>
+<script>
+// Browser-source overlay: connects to nuggtbot and plays audio on play_sound events.
+// Add this page's URL as a Browser Source in OBS. OBS's CEF allows autoplay.
+const log = document.getElementById('log');
+function connect(){
+  const proto = location.protocol==='https:'?'wss':'ws';
+  const ws = new WebSocket(proto+'://'+location.host+'/ws');
+  ws.onopen = ()=>{ log.textContent='overlay connected'; };
+  ws.onclose = ()=>{ log.textContent='reconnecting…'; setTimeout(connect,2000); };
+  ws.onmessage = (e)=>{
+    let ev; try{ ev=JSON.parse(e.data); }catch(_){ return; }
+    if(ev.type==='play_sound'){
+      const a = new Audio('/sounds/'+encodeURIComponent(ev.file));
+      a.volume = Math.max(0, Math.min(1, ev.volume==null?1:ev.volume));
+      a.play().catch(err=>{ log.textContent='audio blocked: '+err; });
+      if(ev.image){ showImage(ev.image, ev.image_secs); }
+    }
+  };
+}
+connect();
+const imgEl = document.getElementById('img');
+// Restart the animation each time, even on back-to-back triggers.
+function showImage(name, secs){
+  imgEl.classList.remove('show');
+  void imgEl.offsetWidth;
+  imgEl.style.animationDuration = ((secs>0?secs:4))+'s';
+  imgEl.src = '/images/'+encodeURIComponent(name);
+  imgEl.classList.add('show');
+}
+imgEl.addEventListener('animationend', ()=>{ imgEl.classList.remove('show'); imgEl.src=''; });
+</script>
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Stream Info Dock</title>
+<style>
+  :root{
+    --bg:#0c0c0e; --panel:#19191d; --row:#1d1d22; --border:#2a2a30;
+    --text:#e9e9ec; --muted:#9a9aa3; --gold:#f0a81e; --gold-soft:rgba(240,168,30,.14);
+    --input:#0f0f12;
+  }
+  *{ box-sizing:border-box; }
+  body{ margin:0; background:var(--bg); color:var(--text); font:15px/1.5 system-ui,sans-serif; padding:14px; }
+  label{ display:block; font-size:12px; color:var(--muted); margin:12px 0 4px; }
+  input[type=text]{ width:100%; background:var(--input); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:9px 11px; font:inherit; transition:border-color .12s ease, box-shadow .12s ease; }
+  input[type=text]:focus-visible{ outline:0; border-color:var(--gold); box-shadow:0 0 0 3px var(--gold-soft); }
+  /* platform switches (top) */
+  .switches{ display:flex; gap:10px; flex-wrap:wrap; }
+  .sw{ display:flex; align-items:center; gap:8px; background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:8px 12px; cursor:pointer; user-select:none; font-size:14px; }
+  .sw.off{ opacity:.45; }
+  .sw.disabled{ opacity:.3; cursor:not-allowed; }
+  .sw .track{ position:relative; width:38px; height:22px; border-radius:11px; background:#3a3a42; transition:background .15s ease; flex:0 0 auto; }
+  .sw .track::after{ content:""; position:absolute; top:2px; left:2px; width:18px; height:18px; border-radius:50%; background:#fff; transition:transform .15s ease; }
+  .sw.on .track{ background:var(--gold); }
+  .sw.on .track::after{ transform:translateX(16px); }
+  .sw input{ position:absolute; opacity:0; width:0; height:0; }
+  .cat{ position:relative; }
+  #list{ display:none; position:absolute; left:0; right:0; z-index:5; background:var(--panel); border:1px solid var(--border); border-radius:0 0 8px 8px; max-height:240px; overflow:auto; box-shadow:0 8px 24px rgba(0,0,0,.4); }
+  #list .it{ display:flex; gap:8px; align-items:center; padding:7px 9px; cursor:pointer; border-top:1px solid var(--border); }
+  #list .it:hover{ background:var(--row); }
+  #list img{ width:34px; height:46px; object-fit:cover; border-radius:3px; }
+  button{ margin-top:16px; background:var(--gold); color:#201604; border:0; border-radius:6px; padding:10px 18px; font:inherit; font-weight:700; cursor:pointer; }
+  button:disabled{ opacity:.5; cursor:default; }
+  .hint{ font-size:12px; color:var(--muted); margin-top:8px; min-height:1.1em; }
+</style>
+</head>
+<body>
+  <div class="switches" id="switches">
+    <label class="sw" data-p="twitch"><span class="track"></span><input type="checkbox" checked> Twitch</label>
+    <label class="sw" data-p="kick"><span class="track"></span><input type="checkbox" checked> Kick</label>
+    <label class="sw" data-p="youtube"><span class="track"></span><input type="checkbox" checked> YouTube</label>
+  </div>
+
+  <label>Título</label>
+  <input id="title" type="text" maxlength="140" placeholder="Título da live">
+
+  <label>Categoria <span style="opacity:.6">(Twitch/Kick — YouTube ignora)</span></label>
+  <div class="cat">
+    <input id="cat" type="text" autocomplete="off" placeholder="digite 2+ letras">
+    <div id="list"></div>
+  </div>
+  <div class="hint" id="cat_sel"></div>
+
+  <button id="apply">Aplicar</button>
+  <div class="hint" id="res"></div>
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+let cat=null, timer=null, results=[];
+const PLATS=['twitch','kick','youtube'];
+const swEl=p=>document.querySelector('.sw[data-p="'+p+'"]');
+
+// Switch visuals follow the checkbox; disabled platforms can't be turned on.
+function paintSwitches(){ PLATS.forEach(p=>{ const el=swEl(p), on=el.querySelector('input').checked;
+  el.classList.toggle('on',on&&!el.classList.contains('disabled')); el.classList.toggle('off',!on); }); }
+document.querySelectorAll('.sw').forEach(el=>{
+  el.querySelector('input').addEventListener('change',paintSwitches);
+  el.addEventListener('click',e=>{ if(el.classList.contains('disabled'))e.preventDefault(); });
+});
+
+async function load(){ let s; try{ s=await (await fetch('/api/streaminfo/status')).json(); }catch(_){ return; }
+  let anyReady=false, maxLen=0;
+  PLATS.forEach(p=>{ const ready=s[p]&&s[p].ready; const el=swEl(p), inp=el.querySelector('input');
+    el.classList.toggle('disabled',!ready); if(!ready)inp.checked=false; else anyReady=true;
+    if(ready&&s.limits&&s.limits[p])maxLen=Math.max(maxLen,s.limits[p]); });
+  if(maxLen)$('title').maxLength=maxLen;
+  paintSwitches();
+  if(!anyReady){ $('res').textContent='Nenhuma conta conectada (configure no painel). YouTube exige video_id definido.'; return; }
+  try{ const info=(await (await fetch('/api/streaminfo')).json()).info||{}; const cur=info.twitch||info.kick||info.youtube||{};
+    if(cur.title!=null)$('title').value=cur.title;
+    if(cur.category&&cur.category.name){ cat={name:cur.category.name}; $('cat').value=cur.category.name; }
+  }catch(_){}
+}
+
+function search(){ clearTimeout(timer); const q=$('cat').value.trim(); const box=$('list');
+  if(q.length<2){ box.style.display='none'; return; }
+  timer=setTimeout(async()=>{ let r; try{ r=await (await fetch('/api/categories?q='+encodeURIComponent(q))).json(); }catch(_){ return; }
+    results=r.results||[];
+    box.innerHTML=results.map((c,i)=>`<div class="it" data-i="${i}">${c.image?`<img src="${c.image}">`:''}<span style="flex:1">${c.name.replace(/[<>&]/g,'')}</span><small style="opacity:.6">${c.twitchId?'tw':''}${c.kickId?' kick':''}</small></div>`).join('')||'<div class="it"><small>nada</small></div>';
+    box.querySelectorAll('.it[data-i]').forEach(d=>d.onclick=()=>pick(+d.dataset.i));
+    box.style.display='block';
+  },250); }
+$('cat').addEventListener('input',search);
+
+function pick(i){ const c=results[i]; if(!c)return; cat=c; $('cat').value=c.name; $('list').style.display='none';
+  $('cat_sel').textContent='categoria: '+c.name+(c.twitchId?' ✓tw':'')+(c.kickId?' ✓kick':''); }
+document.addEventListener('click',e=>{ if(!$('cat').parentNode.contains(e.target))$('list').style.display='none'; });
+
+async function apply(){ const targets={};
+  PLATS.forEach(p=>{ targets[p]=swEl(p).querySelector('input').checked; });
+  if(!PLATS.some(p=>targets[p])){ $('res').textContent='ative ao menos uma plataforma'; return; }
+  const body={title:$('title').value,targets};
+  if(cat&&(cat.twitchId||cat.kickId))body.category={twitchId:cat.twitchId,kickId:cat.kickId,name:cat.name};
+  $('apply').disabled=true; let r; try{ r=await (await fetch('/api/streaminfo',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})).json(); }catch(_){ $('res').textContent='erro'; $('apply').disabled=false; return; }
+  $('apply').disabled=false; const res=r.results||{};
+  const parts=Object.entries(res).map(([p,v])=>p+': '+(v.ok?(v.warning?('ok ('+v.warning+')'):'ok'):('erro '+(v.error||''))));
+  $('res').textContent=parts.join(' · ')||(r.error||''); }
+$('apply').onclick=apply;
+load();
+</script>
+</body>
+</html>

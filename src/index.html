@@ -1,0 +1,1944 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>nuggtbot</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHBhdGggZD0iTTIxIDhjOS01LjUgMjMtMy41IDI5IDYgMy41IDUuNSA0IDcgOCAxMSA0LjUgNC41IDMuNSAxMi0zIDE3LTUuNSA0LjItOSA3LTE3IDguNUMyOCA1OSAxNiA1NiA5IDQ3IDMgMzkgMyAyOCA4IDE5YzMtNS41IDYtNy41IDEzLTExeiIgZmlsbD0iI2YwYTgxZSIgc3Ryb2tlPSIjOWE2NDBiIiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48Y2lyY2xlIGN4PSIyNCIgY3k9IjI1IiByPSIyLjQiIGZpbGw9IiM5YTY0MGIiLz48Y2lyY2xlIGN4PSIzNyIgY3k9IjIxIiByPSIyIiBmaWxsPSIjOWE2NDBiIi8+PGNpcmNsZSBjeD0iNDMiIGN5PSIzNCIgcj0iMi4yIiBmaWxsPSIjOWE2NDBiIi8+PGNpcmNsZSBjeD0iMjkiIGN5PSIzOCIgcj0iMS44IiBmaWxsPSIjOWE2NDBiIi8+PGNpcmNsZSBjeD0iMzUiIGN5PSI0NyIgcj0iMiIgZmlsbD0iIzlhNjQwYiIvPjxjaXJjbGUgY3g9IjE4IiBjeT0iMzQiIHI9IjEuNiIgZmlsbD0iIzlhNjQwYiIvPjwvc3ZnPg==">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body { font-family: system-ui, sans-serif; margin:0; height:100vh; display:flex; flex-direction:column; background:#15171c; color:#e6e6e6; }
+  .top { display:flex; align-items:center; gap:14px; padding:10px 16px; background:#1e2230; border-bottom:1px solid #2a2f3a; }
+  .top .brand { font-weight:700; display:flex; align-items:center; gap:8px; }
+  .dot { width:10px; height:10px; border-radius:50%; background:#888; }
+  .dot.on { background:#2ecc71; }
+  .top .spacer { flex:1; }
+  .top .conn { color:#9aa0a6; font-size:13px; }
+  .statw { position:relative; }
+  .statbtn { display:flex; align-items:center; gap:8px; background:#262b38; border:1px solid #2a2f3a; color:#e6e6e6; font-size:13px; padding:6px 10px; border-radius:8px; cursor:pointer; }
+  .statbtn:hover { background:#2d3342; }
+  .sdot { width:10px; height:10px; border-radius:50%; background:#888; flex:0 0 auto; }
+  .sdot.green { background:#2ecc71; } .sdot.yellow { background:#f1c40f; } .sdot.red { background:#e74c3c; } .sdot.grey { background:#888; }
+  .statcaret { color:#9aa0a6; font-size:10px; }
+  .statlist { position:absolute; right:0; top:calc(100% + 6px); min-width:220px; background:#1e2230; border:1px solid #2a2f3a; border-radius:8px; padding:6px; box-shadow:0 8px 24px rgba(0,0,0,.4); z-index:50; }
+  .srow { display:flex; align-items:center; gap:8px; padding:6px 8px; font-size:13px; }
+  .intbadge { font-size:12px; font-weight:500; padding:2px 8px; border-radius:10px; margin-left:8px; vertical-align:middle; }
+  .intbadge.green { background:rgba(46,204,113,.15); color:#2ecc71; } .intbadge.red { background:rgba(231,76,60,.15); color:#e74c3c; }
+  .intctl { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin:8px 0 2px; }
+  .intctl .ghost { padding:5px 12px; }
+  .wrap { flex:1; display:flex; min-height:0; }
+  aside { width:230px; background:#15171c; border-right:1px solid #22262f; overflow:auto; padding:8px 0; }
+  aside .grp { color:#6b7280; font-size:11px; text-transform:uppercase; letter-spacing:.5px; padding:14px 18px 6px; }
+  aside a { display:flex; align-items:center; gap:10px; padding:9px 18px; color:#c9ced6; cursor:pointer; text-decoration:none; border-left:3px solid transparent; }
+  aside a:hover { background:#1a1d26; }
+  aside a.active { background:#1b1e26; color:#fff; border-left-color:#3b82f6; }
+  main { flex:1; overflow:auto; padding:20px 26px; }
+  h1 { font-size:22px; margin:0 0 2px; }
+  .sub { color:#9aa0a6; font-size:13px; margin:0 0 16px; }
+  section.card { background:#1b1e26; border:1px solid #2a2f3a; border-radius:10px; padding:16px; margin-bottom:16px; }
+  h2 { margin:0 0 12px; font-size:15px; }
+  label { display:block; font-size:12px; color:#9aa0a6; margin:10px 0 4px; }
+  input, select, textarea { background:#0f1116; color:#e6e6e6; border:1px solid #2a2f3a; border-radius:6px; padding:8px; width:100%; font-family:inherit; }
+  textarea { min-height:90px; font-family:ui-monospace,monospace; font-size:13px; }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:0 16px; }
+  @media (max-width:800px){ .grid{ grid-template-columns:1fr; } aside{ width:64px; } aside a span{ display:none; } aside .grp{ display:none; } }
+  button.go { background:#3b82f6; color:#fff; border:0; border-radius:6px; padding:9px 14px; cursor:pointer; }
+  button.ghost { background:#262b36; color:#e6e6e6; }
+  button.del { background:#ef4444; color:#fff; border:0; border-radius:6px; padding:4px 9px; cursor:pointer; }
+  button.run { background:#2ecc71; color:#06231a; border:0; border-radius:6px; padding:4px 9px; cursor:pointer; font-weight:600; }
+  .row { display:flex; gap:8px; align-items:center; margin-bottom:8px; flex-wrap:wrap; }
+  ul { list-style:none; padding:0; margin:0; }
+  li { display:flex; gap:8px; align-items:center; padding:8px 0; border-bottom:1px solid #22262f; }
+  code { color:#f0b429; }
+  .tag { background:#262b36; color:#9aa0a6; border-radius:5px; padding:1px 7px; font-size:12px; }
+  .feed { height:calc(100vh - 180px); overflow:auto; font-size:14px; line-height:1.55; }
+  .u { color:#8ab4f8; font-weight:600; } .sys { color:#9aa0a6; font-style:italic; }
+  .hint { color:#6b7280; font-size:12px; margin-top:6px; }
+  .ok { color:#2ecc71; font-size:13px; margin-left:10px; }
+  .acct { border:1px solid #2a2f3a; border-radius:10px; margin-bottom:12px; overflow:hidden; background:#171a22; }
+  .acct-head { display:flex; align-items:center; gap:12px; padding:12px 14px; cursor:pointer; user-select:none; }
+  .acct-head:hover { background:#1b1f29; }
+  .acct-avatar { width:44px; height:44px; border-radius:50%; object-fit:cover; background:#262b36; flex:0 0 auto;
+    display:flex; align-items:center; justify-content:center; font-size:18px; color:#6b7280; border:1px solid #2a2f3a; }
+  .acct.on .acct-avatar { border-color:#2ecc71; }
+  .acct-meta { flex:1; min-width:0; }
+  .acct-role { font-size:12px; color:#9aa0a6; }
+  .acct-name { font-weight:600; font-size:15px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .acct-name.off { color:#6b7280; font-weight:400; }
+  .acct-badge { font-size:11px; padding:2px 8px; border-radius:20px; background:#262b36; color:#9aa0a6; }
+  .acct.on .acct-badge { background:#123524; color:#2ecc71; }
+  .acct-chev { color:#6b7280; transition:transform .15s; }
+  .acct.open .acct-chev { transform:rotate(180deg); }
+  .acct-body { display:none; padding:0 14px 14px; border-top:1px solid #22262f; }
+  .acct.open .acct-body { display:block; }
+  .platform-title { font-size:13px; font-weight:600; color:#9aa0a6; text-transform:uppercase; letter-spacing:.04em; margin:4px 0 10px; }
+  .satree { margin-top:6px; }
+  .sa-node { border:1px solid #2a2f3a; border-radius:8px; padding:8px; margin:6px 0; background:#171a22; }
+  .sa-head { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .sa-head > code { background:#262b36; padding:2px 7px; border-radius:5px; color:#8ab4f8; }
+  .sa-fields { display:flex; gap:6px; flex-wrap:wrap; flex:2 1 300px; }
+  .sa-child { margin:6px 0 2px 16px; padding-left:10px; border-left:2px solid #2a2f3a; }
+  .sa-childlabel { font-size:11px; color:#9aa0a6; text-transform:uppercase; letter-spacing:.03em; margin:2px 0; }
+  select.sa-add { background:#1b2130; border:1px dashed #3b82f6; color:#8ab4f8; margin:4px 0; }
+  .actions3 { display:flex; gap:16px; align-items:flex-start; }
+  .pane-left { flex:1 1 38%; min-width:0; } .pane-right { flex:1 1 62%; min-width:0; }
+  @media (max-width:900px){ .actions3{ flex-direction:column; } .pane-left,.pane-right{ width:100%; flex:none; } }
+  .agrp { font-size:12px; font-weight:600; color:#9aa0a6; text-transform:uppercase; letter-spacing:.03em; margin:10px 0 4px; }
+  .arow { display:flex; align-items:center; gap:8px; padding:6px 8px; border-radius:6px; cursor:pointer; }
+  .arow:hover { background:#1a1d26; } .arow.sel { background:#1b2130; box-shadow:inset 2px 0 0 #3b82f6; }
+  .arow .an { flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .arow.off .an { color:#6b7280; }
+  .page { display:none; } .page.active { display:block; }
+  .chk { display:flex; align-items:center; gap:8px; } .chk input{ width:auto; }
+
+  /* ---- visual coherence pass (colors/typography/states only; no layout changes) ---- */
+  body { font-family:'Inter', system-ui, sans-serif; background:#0e1017; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; }
+  h1 { letter-spacing:-.015em; }
+  .top { background:#13161f; border-bottom-color:#232a35; }
+  aside { background:#0e1017; border-right-color:#1e232d; }
+  aside a { transition:background .12s ease, color .12s ease, border-color .12s ease; }
+  aside a:hover { background:#171b24; }
+  aside a.active { background:#171c28; border-left-color:#3b82f6; }
+  section.card { background:#161922; border-color:#242a35; box-shadow:0 1px 2px rgba(0,0,0,.25); }
+  input, select, textarea { background:#0f1218; border-color:#2a3038; transition:border-color .12s ease, box-shadow .12s ease; }
+  input:focus-visible, select:focus-visible, textarea:focus-visible { outline:none; border-color:#3b82f6; box-shadow:0 0 0 3px rgba(59,130,246,.22); }
+  button { transition:background .12s ease, filter .12s ease, box-shadow .12s ease; }
+  button:focus-visible { outline:2px solid #3b82f6; outline-offset:2px; }
+  button.go:hover { background:#2f6fe0; } button.go:active { background:#2a63c9; }
+  button.ghost { background:#1f2530; border:1px solid #2a3038; } button.ghost:hover { background:#262d3a; }
+  button.del:hover { background:#dc3f3f; } button.run:hover { filter:brightness(1.07); }
+  .statbtn { background:#1f2530; border-color:#2a3038; } .statbtn:hover { background:#262d3a; }
+  .statlist { background:#161922; border-color:#242a35; }
+  .acct { background:#141822; border-color:#242a35; } .acct-head:hover { background:#191e29; }
+  .sa-node { background:#141822; border-color:#242a35; }
+  .arow { transition:background .1s ease; }
+  .tag { background:#1f2530; }
+  li { border-bottom-color:#20252f; }
+  *::-webkit-scrollbar { width:10px; height:10px; }
+  *::-webkit-scrollbar-thumb { background:#2a313d; border-radius:6px; border:2px solid transparent; background-clip:padding-box; }
+  *::-webkit-scrollbar-thumb:hover { background:#36404f; }
+
+  /* ===================== nugebot theme (Streamer.bot-like) ===================== */
+  :root{
+    --bg:#0c0c0e; --sidebar:#141416; --panel:#19191d; --row:#1d1d22;
+    --border:#2a2a30; --text:#e9e9ec; --muted:#9a9aa3;
+    --gold:#f0a81e; --gold-hi:#ffbb33; --gold-soft:rgba(240,168,30,.14);
+  }
+  body{ background:var(--bg); color:var(--text); }
+  /* top bar */
+  .top{ background:#141416; border-bottom:1px solid #242428; padding:0 14px; height:52px; gap:12px; }
+  .hamb{ display:flex; align-items:center; justify-content:center; background:transparent; border:0; color:var(--muted); cursor:pointer; padding:7px; border-radius:8px; }
+  .hamb:hover{ background:#1e1e23; color:#fff; }
+  .brand{ font-weight:700; font-size:17px; letter-spacing:-.01em; gap:9px; color:#fff; }
+  .brand .nug{ filter:drop-shadow(0 1px 2px rgba(0,0,0,.4)); flex:0 0 auto; }
+  .brand .bname{ font-weight:600; } .brand .bname b{ color:var(--gold); font-weight:800; }
+  .brand .dot{ width:8px; height:8px; }
+  /* sidebar */
+  aside{ background:var(--sidebar); border-right:1px solid #202024; width:238px; padding:10px 8px; }
+  aside .grp{ color:#6a6a73; padding:14px 12px 6px; }
+  aside a{ gap:12px; padding:9px 12px; margin:1px 0; border-radius:8px; border-left:0; color:#c7c7cf; }
+  aside a svg{ width:18px; height:18px; flex:0 0 auto; opacity:.8; }
+  aside a:hover{ background:#1e1e23; }
+  aside a.active{ background:var(--gold-soft); color:#fff; border-left:0; box-shadow:inset 3px 0 0 var(--gold); }
+  aside a.active svg{ color:var(--gold); opacity:1; }
+  body.nav-collapsed aside{ width:60px; }
+  body.nav-collapsed aside a{ justify-content:center; padding:10px 0; }
+  body.nav-collapsed aside a span{ display:none; }
+  body.nav-collapsed aside .grp{ display:none; }
+  /* surfaces */
+  section.card{ background:var(--panel); border:1px solid var(--border); border-radius:12px; box-shadow:0 1px 2px rgba(0,0,0,.3); }
+  input, select, textarea{ background:#0f0f12; border-color:#2c2c33; }
+  input:focus-visible, select:focus-visible, textarea:focus-visible{ border-color:var(--gold); box-shadow:0 0 0 3px var(--gold-soft); }
+  /* buttons */
+  button.go{ background:var(--gold); color:#201604; font-weight:700; }
+  button.go:hover{ background:var(--gold-hi); } button.go:active{ background:#e59b14; }
+  button.ghost{ background:#242429; border:1px solid #2f2f36; color:var(--text); } button.ghost:hover{ background:#2c2c33; }
+  button:focus-visible{ outline:2px solid var(--gold); }
+  /* bits */
+  .statbtn{ background:#242429; border-color:#2f2f36; } .statbtn:hover{ background:#2c2c33; }
+  .statlist{ background:var(--panel); border-color:var(--border); }
+  .acct, .sa-node{ background:#151518; border-color:var(--border); }
+  .arow.sel{ background:var(--gold-soft); box-shadow:inset 2px 0 0 var(--gold); }
+  select.sa-add{ background:#1c1708; border:1px dashed var(--gold); color:var(--gold); }
+  li{ border-bottom-color:#212127; }
+  code{ color:var(--gold); }
+  .u{ color:var(--gold-hi); }
+  .tag{ background:#242429; }
+
+  /* ===================== CUI design language (web port) ===================== */
+  /* Flat surfaces: shadow only on floating elements (dropdowns/popovers). */
+  section.card{ box-shadow:none; }
+  .statlist{ box-shadow:0 10px 30px rgba(0,0,0,.5); }
+  .sa-child{ border-left-color:#2a2a30; }
+  /* CUI switch: native on/off checkboxes become toggles. */
+  .chk input[type=checkbox]{ appearance:none; -webkit-appearance:none; width:36px; height:20px; margin:0;
+    border-radius:999px; background:#2c2c33; border:1px solid #3a3a42; position:relative; cursor:pointer; flex:0 0 auto;
+    transition:background .15s ease, border-color .15s ease; }
+  .chk input[type=checkbox]::after{ content:''; position:absolute; top:2px; left:2px; width:14px; height:14px;
+    border-radius:50%; background:#c7c7cf; transition:transform .15s ease, background .15s ease; }
+  .chk input[type=checkbox]:checked{ background:var(--gold); border-color:var(--gold); }
+  .chk input[type=checkbox]:checked::after{ transform:translateX(16px); background:#201604; }
+  .chk input[type=checkbox]:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
+  .chk{ gap:9px; }
+  /* Hairline inputs/buttons, consistent radius. */
+  input, select, textarea, button.go, button.ghost, button.del, button.run, .statbtn{ border-radius:8px; }
+  /* Motion explains change, and never fights the user. */
+  @media (prefers-reduced-motion:reduce){ *{ transition:none !important; animation-duration:.001ms !important; animation-iteration-count:1 !important; } }
+  /* Toast (confirmation banner, bottom-center). */
+  .toast{ position:fixed; left:50%; bottom:22px; transform:translateX(-50%) translateY(12px);
+    background:var(--panel); color:var(--text); border:1px solid var(--border); border-radius:10px;
+    padding:11px 18px; font-size:14px; box-shadow:0 10px 30px rgba(0,0,0,.5); display:flex; align-items:center; gap:9px;
+    opacity:0; pointer-events:none; transition:opacity .2s ease, transform .2s ease; z-index:200; }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+  .toast::before{ content:''; width:8px; height:8px; border-radius:50%; background:var(--gold); flex:0 0 auto; }
+  .toast.err::before{ background:#e74c3c; }
+  /* Accounts: hide credential fields (client id/secret/channel) until the arrow is clicked. */
+  .creds-toggle{ cursor:pointer; user-select:none; display:flex; align-items:center; gap:8px; }
+  .creds-toggle .caret{ transition:transform .15s ease; color:var(--muted); font-size:12px; }
+  .card.creds-open .creds-toggle .caret{ transform:rotate(90deg); }
+  .creds{ display:none; }
+  .card.creds-open .creds{ display:block; }
+  .pbrand{ display:inline-flex; align-items:center; gap:7px; font-weight:700; }
+  .plogo{ width:17px; height:17px; flex:0 0 auto; }
+  /* Integrations: square tiles in a grid; address/port expand on click. */
+  .intgrid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(210px,1fr)); grid-auto-flow:dense; gap:14px; margin-bottom:16px; align-items:start; }
+  /* Opened card grows to a content-friendly width (2 columns; the overlay card
+     needs 3 for its side-by-side code boxes), not the whole row. `dense` flow
+     backfills the gap it leaves. On narrow screens the span clamps to what fits. */
+  .intcard.open{ grid-column:span 2; }
+  #card_int_overlay.open{ grid-column:span 3; }
+  .intcard.open .intcard-body{ max-width:760px; }
+  #discord_list li{ flex-wrap:wrap; }
+  .intsec-title{ font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); font-weight:700; margin:24px 0 10px; }
+  /* Per-card on/off: off cards dim and reorder to the end (right). */
+  .intcard .intsw{ position:absolute; bottom:14px; right:14px; margin:0; }
+  .intcard.off{ opacity:.5; order:1; }
+  .intcard.off .intcard-head:hover{ background:transparent; }
+  .intcard{ margin:0; padding:0; overflow:hidden; position:relative; transition:transform .16s ease, box-shadow .16s ease, border-color .16s ease; }
+  .intcard:hover{ transform:translateY(-3px); box-shadow:0 8px 24px rgba(0,0,0,.38); border-color:#3a3f4a; }
+  /* Open card is expanded: keep the lift off, just a soft shadow. */
+  .intcard.open{ transform:none; box-shadow:0 8px 24px rgba(0,0,0,.30); }
+  .intcard-head{ display:flex; flex-direction:column; align-items:flex-start; justify-content:center; gap:10px; padding:18px; min-height:120px; cursor:pointer; user-select:none; }
+  .intcard-head:hover{ background:#1e1e23; }
+  .intcard-title{ font-size:15px; font-weight:700; }
+  .intcard .caret2{ position:absolute; top:14px; right:16px; color:var(--muted); font-size:12px; transition:transform .15s ease; }
+  .intcard.open .caret2{ transform:rotate(90deg); }
+  .intcard.open .intcard-head{ min-height:0; padding-bottom:12px; }
+  .intcard-body{ display:none; padding:0 16px 16px; border-top:1px solid var(--border); }
+  .intcard.open .intcard-body{ display:block; }
+  .intcard-body .grid{ grid-template-columns:1fr; }
+  .intcard-body .intctl{ margin-top:12px; }
+</style>
+</head>
+<body>
+<div class="top">
+  <button class="hamb" title="Menu" onclick="document.body.classList.toggle('nav-collapsed')" aria-label="Toggle menu">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+  </button>
+  <span class="brand">
+    <svg class="nug" viewBox="0 0 64 64" width="30" height="30" aria-hidden="true">
+      <defs><radialGradient id="ng" cx="36%" cy="30%" r="82%">
+        <stop offset="0" stop-color="#ffd874"/><stop offset=".55" stop-color="#f0a81e"/><stop offset="1" stop-color="#c47e0d"/>
+      </radialGradient></defs>
+      <path d="M21 8c9-5.5 23-3.5 29 6 3.5 5.5 4 7 8 11 4.5 4.5 3.5 12-3 17-5.5 4.2-9 7-17 8.5C28 59 16 56 9 47 3 39 3 28 8 19c3-5.5 6-7.5 13-11z" fill="url(#ng)" stroke="#9a640b" stroke-width="2.6" stroke-linejoin="round"/>
+      <circle cx="24" cy="25" r="2.3" fill="#9a640b" opacity=".65"/><circle cx="37" cy="21" r="1.8" fill="#9a640b" opacity=".55"/>
+      <circle cx="43" cy="34" r="2" fill="#9a640b" opacity=".6"/><circle cx="29" cy="38" r="1.7" fill="#9a640b" opacity=".5"/>
+      <circle cx="35" cy="47" r="1.9" fill="#9a640b" opacity=".55"/><circle cx="18" cy="34" r="1.6" fill="#9a640b" opacity=".45"/>
+    </svg>
+    <span class="bname">nuggt<b>bot</b></span>
+    <span class="dot" id="dot" title="websocket"></span>
+  </span>
+  <span class="spacer"></span>
+  <span class="conn" id="conn" style="display:none">—</span>
+  <div class="statw" id="statw">
+    <button class="statbtn" id="statbtn" onclick="toggleStat(event)">
+      <span class="sdot grey" id="sdot"></span><span id="statlbl">—</span><span class="statcaret">▾</span>
+    </button>
+    <div class="statlist" id="statlist" hidden></div>
+  </div>
+  <button class="statbtn" id="langbtn" onclick="toggleLang()" title="Language / Idioma" style="margin-left:8px">🌐 <span id="langlbl">EN</span></button>
+</div>
+<div class="wrap">
+  <aside id="nav"></aside>
+  <main id="main">
+    <!-- Dashboard -->
+    <div class="page" data-page="dashboard">
+      <h1>Dashboard</h1><p class="sub">Live chat + events feed.</p>
+      <section class="card"><div class="feed" id="feed"></div></section>
+    </div>
+    <!-- Chat ao vivo (dock) -->
+    <div class="page" data-page="chat">
+      <h1>Chat ao vivo</h1><p class="sub">Twitch + Kick + YouTube unificado. Clique no nome para moderar.</p>
+      <section class="card">
+        <div id="dock_log" style="height:58vh;overflow:auto;background:#0e1116;border:1px solid #222;border-radius:8px;padding:10px"></div>
+        <div class="row" style="margin-top:10px">
+          <input id="dock_text" placeholder="mensagem…" style="flex:1 1 240px" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();dockSend(this);}">
+          <label class="chk" style="margin:0"><input type="checkbox" id="dock_tw" checked> Twitch</label>
+          <label class="chk" style="margin:0"><input type="checkbox" id="dock_kick" checked> Kick</label>
+          <button class="go" onclick="dockSend()">Enviar</button>
+        </div>
+      </section>
+      <div id="dock_menu" style="display:none;position:fixed;z-index:50;background:#14181f;border:1px solid #333;border-radius:6px;padding:4px 0;min-width:140px"></div>
+    </div>
+    <!-- Docs -->
+    <div class="page" data-page="docs">
+      <h1>Docs</h1><p class="sub">Tudo que o bot faz: sub-ações, variáveis e eventos.</p>
+      <section class="card"><h2 style="margin-top:0">Variáveis (usar no texto)</h2>
+        <div id="docs_vars"></div>
+      </section>
+      <section class="card"><h2 style="margin-top:0">Eventos (pra Bind event)</h2>
+        <div id="docs_events"></div>
+      </section>
+      <section class="card"><h2 style="margin-top:0">Sub-ações</h2>
+        <div id="docs_subs"></div>
+      </section>
+    </div>
+    <!-- Commands -->
+    <div class="page" data-page="commands">
+      <h1>Commands</h1><p class="sub">Chat trigger → reply text or an Action.</p>
+      <section class="card">
+        <div class="row">
+          <input id="cmd_trigger" placeholder="!hello" style="flex:1 1 120px">
+          <input id="cmd_response" placeholder="reply text ($user, $var.NAME)" style="flex:2 1 220px">
+          <select id="cmd_action" style="flex:1 1 150px"><option value="">— or run Action —</option></select>
+        </div>
+        <div class="row" style="margin-top:8px">
+          <input id="cmd_gcd" type="number" value="0" title="global cooldown (s)" placeholder="global cd s" style="flex:0 0 110px">
+          <input id="cmd_ucd" type="number" value="0" title="per-user cooldown (s)" placeholder="user cd s" style="flex:0 0 110px">
+          <select id="cmd_grant" style="flex:0 0 130px"><option value="">anyone</option><option value="allow">allow only</option><option value="deny">deny</option></select>
+          <input id="cmd_groups" placeholder="groups: moderator,vip,subscriber" style="flex:1 1 200px">
+          <button class="go" id="cmd_btn" onclick="addCmd()">Add</button>
+          <button class="ghost" id="cmd_cancel" onclick="cancelCmd()" style="display:none">Cancel</button>
+        </div>
+        <div class="row" style="margin-top:8px">
+          <select id="cmd_mode" style="flex:0 0 110px"><option value="">basic</option><option value="regex">regex</option></select>
+          <select id="cmd_location" style="flex:0 0 120px"><option value="">start</option><option value="exact">exact</option><option value="anywhere">anywhere</option></select>
+          <label class="chk" style="margin:0"><input type="checkbox" id="cmd_case"> case sensitive</label>
+          <input id="cmd_aliases" placeholder="aliases (comma)" style="flex:1 1 140px">
+          <label class="chk" style="margin:0"><input type="checkbox" id="cmd_pf_tw" checked> twitch</label>
+          <label class="chk" style="margin:0"><input type="checkbox" id="cmd_pf_kc" checked> kick</label>
+          <label class="chk" style="margin:0"><input type="checkbox" id="cmd_pf_yt" checked> youtube</label>
+        </div>
+        <div class="hint">Cooldown 0 = off. Groups (comma): broadcaster, moderator, vip, subscriber, everyone. Broadcaster always exempt. Uncheck a platform to restrict.</div>
+        <ul id="cmds"></ul>
+      </section>
+    </div>
+    <!-- Actions -->
+    <div class="page" data-page="actions">
+      <h1>Actions</h1><p class="sub">An Action = ordered list of sub-actions. The core of nuggtbot.</p>
+      <div class="row"><button class="ghost go" onclick="importSb()">Import from Streamer.bot</button><span class="ok" id="imp_ok"></span></div>
+      <details style="margin-bottom:12px"><summary style="cursor:pointer;color:#9aa0a6">Share: export / import nuggtbot code</summary>
+        <div class="row" style="margin-top:6px">
+          <button class="ghost" onclick="exportAll()">Export all → code</button>
+          <button class="ghost" onclick="importCode()">Import code</button>
+          <span class="ok" id="exp_ok"></span>
+        </div>
+        <textarea id="share_code" rows="4" placeholder="BLV1:… paste a code here to import, or Export to fill it" style="width:100%;margin-top:6px;font-family:monospace;font-size:12px"></textarea>
+      </details>
+      <div class="actions3">
+        <div class="pane-left">
+          <section class="card" style="margin:0">
+            <div class="row" style="margin-bottom:8px">
+              <input id="act_filter" placeholder="filter…" oninput="loadActions()" style="flex:1 1 120px">
+              <button class="go" onclick="newAction()">+ New</button>
+            </div>
+            <div id="acts"></div>
+          </section>
+        </div>
+        <div class="pane-right">
+          <section class="card" style="margin:0 0 16px">
+            <h2 style="margin-top:0" id="act_editor_title">New action</h2>
+            <div class="row">
+              <input id="act_name" placeholder="action name" style="flex:2 1 200px">
+              <input id="act_group" placeholder="group (optional)" style="flex:1 1 140px">
+              <input id="act_queue" placeholder="queue (blank = Default)" style="flex:1 1 140px">
+            </div>
+            <div class="row" style="margin-top:8px">
+              <label class="chk" style="margin:0"><input type="checkbox" id="act_concurrent"> concurrent</label>
+              <label class="chk" style="margin:0"><input type="checkbox" id="act_random"> random</label>
+              <label class="chk" style="margin:0"><input type="checkbox" id="act_always"> always run</label>
+            </div>
+            <div style="margin-top:12px"><label>Sub-Actions</label><div id="sa_tree" class="satree"></div></div>
+            <details style="margin-top:8px"><summary style="cursor:pointer;color:#9aa0a6">Advanced: edit sub-actions as JSON</summary>
+              <textarea id="sa_json" rows="8" style="width:100%;margin-top:6px;font-family:monospace;font-size:12px"></textarea>
+              <div class="row" style="margin-top:6px">
+                <button class="ghost" onclick="saJsonFromDraft()">Load current</button>
+                <button class="ghost" onclick="saJsonApply()">Apply JSON</button>
+              </div>
+            </details>
+            <button class="go" id="act_btn" style="margin-top:12px" onclick="saveAction()">Save</button>
+            <span class="ok" id="act_ok"></span>
+          </section>
+          <section class="card" style="margin:0">
+            <h2 style="margin-top:0">Triggers</h2>
+            <p class="hint" style="margin-top:0">Commands and events bound to the selected action.</p>
+            <div id="act_triggers"></div>
+          </section>
+        </div>
+      </div>
+    </div>
+    <!-- Queues -->
+    <div class="page" data-page="queues">
+      <h1>Action Queues</h1><p class="sub">Every action runs in a queue. Default is non-blocking (overlap). A blocking queue runs one action at a time, in order.</p>
+      <section class="card">
+        <div class="row">
+          <input id="q_name" placeholder="queue name" style="flex:1 1 160px">
+          <label class="chk" style="margin:0"><input type="checkbox" id="q_blocking"> blocking (sequential)</label>
+          <button class="go" onclick="declareQueue()">Create / set</button>
+          <button class="ghost" onclick="fetch('/api/queues/pause-all',{method:'POST'}).then(loadQueues)">Pause all</button>
+          <button class="ghost" onclick="fetch('/api/queues/resume-all',{method:'POST'}).then(loadQueues)">Resume all</button>
+        </div>
+        <ul id="queues"></ul>
+      </section>
+    </div>
+    <!-- Events -->
+    <div class="page" data-page="events">
+      <h1>Events</h1><p class="sub">Twitch events (via chat: sub/resub/gift/raid/cheer) run an Action. Follow needs EventSub (later).</p>
+      <section class="card">
+        <div class="row">
+          <select id="ev_event" style="flex:1 1 150px">
+            <option value="sub">sub</option><option value="resub">resub</option>
+            <option value="subgift">subgift</option><option value="submysterygift">submysterygift</option>
+            <option value="raid">raid</option><option value="cheer">cheer</option>
+            <option value="follow">follow</option>
+            <option value="hypetrainbegin">hypetrainbegin</option><option value="hypetrainend">hypetrainend</option>
+            <option value="pollend">pollend</option><option value="predictionend">predictionend</option>
+            <option value="channelupdate">channelupdate</option>
+            <option value="goalbegin">goalbegin</option><option value="goalend">goalend</option>
+            <option value="kicksub">kicksub</option><option value="kickgift">kickgift</option>
+            <option value="startup">startup</option>
+            <option value="clipcreated">clipcreated</option>
+          </select>
+          <select id="ev_action" style="flex:1 1 160px"></select>
+          <button class="go" id="ev_btn" onclick="addTrigger()">Bind</button>
+          <button class="ghost" id="ev_cancel" onclick="cancelTrigger()" style="display:none">Cancel</button>
+        </div>
+        <ul id="triggers"></ul>
+      </section>
+    </div>
+    <!-- User Vars -->
+    <div class="page" data-page="uservars">
+      <h1>User Variables</h1><p class="sub">Per-user values (counters, leaderboards). Set via sub-actions <code>set_user_variable</code> / <code>add_to_user_variable</code> (blank user = the triggering user); read with <code>get_user_variable</code>.</p>
+      <section class="card">
+        <div class="row" style="justify-content:space-between"><h2 style="margin:0">Values</h2><button class="ghost" onclick="loadUserVars()">Refresh</button></div>
+        <div id="uservars"></div>
+      </section>
+    </div>
+    <!-- Quotes -->
+    <div class="page" data-page="quotes">
+      <h1>Quotes</h1><p class="sub">Built-in quote store. Use sub-actions <code>quote_add</code> / <code>quote_show</code> in actions bound to chat commands (e.g. !addquote → quote_add text=%rawInput%, !quote → quote_show id=%input0%).</p>
+      <section class="card">
+        <div class="row">
+          <input id="q_text" placeholder="quote text" style="flex:2 1 240px">
+          <input id="q_user" placeholder="said by (optional)" style="flex:1 1 140px">
+          <input id="q_game" placeholder="game (optional)" style="flex:1 1 140px">
+          <button class="go" onclick="addQuote()">Add</button>
+        </div>
+        <ul id="quotes"></ul>
+      </section>
+    </div>
+    <!-- User Groups -->
+    <div class="page" data-page="usergroups">
+      <h1>User Groups</h1><p class="sub">Custom groups of users. Use a group name in a command's permission "groups" field, or manage membership with sub-actions <code>user_group_add</code> / <code>user_group_remove</code>.</p>
+      <section class="card">
+        <div class="row">
+          <input id="ug_group" placeholder="group name" style="flex:1 1 160px">
+          <input id="ug_user" placeholder="user login (optional)" style="flex:1 1 160px">
+          <button class="go" onclick="addUserGroup()">Add</button>
+        </div>
+        <div id="usergroups"></div>
+      </section>
+    </div>
+    <!-- Rewards -->
+    <div class="page" data-page="rewards">
+      <h1>Channel Point Rewards</h1><p class="sub">Rewards de Twitch + Kick. Crie em "Ambas" para ter o mesmo reward nas duas plataformas — eles ficam vinculados pelo <b>ID</b> (não pelo nome) numa linha só com as duas etiquetas, então renomear na Twitch/Kick não desvincula. Use <b>Bind to action</b> e um único action roda nas duas. Para desvincular: delete e crie de novo escolhendo só uma plataforma.</p>
+      <section class="card">
+        <h2 style="margin-top:0">Create reward</h2>
+        <div class="row">
+          <select id="rw_platform" style="flex:0 0 190px"><option value="both">Ambas (Twitch + Kick)</option><option value="twitch">Twitch</option><option value="kick">Kick</option></select>
+          <input id="rw_title" placeholder="title" style="flex:1 1 160px">
+          <input id="rw_cost" type="number" placeholder="cost" value="100" style="flex:0 0 100px">
+          <input id="rw_color" type="color" value="#00e701" style="flex:0 0 48px;padding:2px">
+        </div>
+        <div class="row" style="margin-top:8px">
+          <input id="rw_desc" placeholder="description (optional)" style="flex:1 1 220px">
+          <label class="chk" style="margin:0"><input type="checkbox" id="rw_input"> user input required</label>
+          <button class="go" id="rw_btn" onclick="createReward()">Create</button>
+          <button class="ghost" id="rw_cancel" onclick="cancelReward()" style="display:none">Cancel</button>
+          <span class="ok" id="rw_ok"></span>
+        </div>
+      </section>
+      <section class="card">
+        <div class="row" style="justify-content:space-between;align-items:center">
+          <h2 style="margin:0">Existing rewards</h2>
+          <div class="row" style="gap:6px;margin:0">
+            <button class="ghost" onclick="bulkReward('enable')" title="Ativar os rewards marcados à direita">Ativar selecionados</button>
+            <button class="ghost" onclick="bulkReward('disable')" title="Desativar os rewards marcados à direita">Desativar selecionados</button>
+            <button class="ghost" onclick="loadRewards()">Refresh</button>
+          </div>
+        </div>
+        <div id="rw_errors" class="hint"></div>
+        <ul id="rewards"></ul>
+      </section>
+    </div>
+    <!-- Timers -->
+    <div class="page" data-page="timers">
+      <h1>Timers</h1><p class="sub">Mensagem automática enviada a cada N segundos, nos chats escolhidos (Twitch / Kick / YouTube) e pela conta escolhida (bot ou broadcaster).</p>
+      <section class="card">
+        <div class="row">
+          <input id="tm_name" placeholder="name" style="flex:1 1 120px">
+          <input id="tm_interval" type="number" placeholder="secs" style="width:90px">
+          <input id="tm_text" placeholder="message" style="flex:2 1 220px">
+        </div>
+        <div class="row" style="margin-top:8px;align-items:center">
+          <span class="hint">Chats:</span>
+          <label style="display:inline-flex;gap:4px;align-items:center"><input type="checkbox" id="tm_p_twitch" checked> Twitch</label>
+          <label style="display:inline-flex;gap:4px;align-items:center"><input type="checkbox" id="tm_p_kick"> Kick</label>
+          <label style="display:inline-flex;gap:4px;align-items:center"><input type="checkbox" id="tm_p_youtube"> YouTube</label>
+          <span class="hint" style="margin-left:10px">Conta:</span>
+          <select id="tm_account" style="width:150px"><option value="bot">bot</option><option value="broadcaster">broadcaster</option></select>
+          <button class="go" onclick="addTimer()">Add</button>
+        </div>
+        <ul id="timers"></ul>
+      </section>
+    </div>
+    <!-- Variables -->
+    <div class="page" data-page="variables">
+      <h1>Variables</h1><p class="sub">Global variables. Use as <code>$var.NAME</code>.</p>
+      <section class="card">
+        <div class="row">
+          <input id="var_name" placeholder="name" style="flex:1 1 120px">
+          <input id="var_value" placeholder="value" style="flex:2 1 220px">
+          <button class="go" onclick="setVar()">Set</button>
+        </div>
+        <ul id="vars"></ul>
+      </section>
+    </div>
+    <!-- Accounts -->
+    <div class="page" data-page="accounts">
+      <h1>Accounts</h1><p class="sub">Platform credentials: Twitch, Kick, YouTube.</p>
+      <section class="card">
+        <div class="platform-title creds-toggle" onclick="this.parentElement.classList.toggle('creds-open')"><span class="caret">▸</span><span class="pbrand" style="color:#a970ff"><svg class="plogo" viewBox="0 0 24 24" fill="currentColor"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/></svg>Twitch</span> <span style="font-weight:400;color:#6a6a73;font-size:12px">— credenciais</span></div>
+        <div class="creds">
+          <div class="grid">
+            <div><label>Client ID (App ID)</label><input id="tw_client_id"></div>
+            <div><label>Client Secret</label><input id="tw_client_secret" type="password"></div>
+            <div><label>Channel (to join, blank = broadcaster)</label><input id="tw_channel"></div>
+          </div>
+          <div class="hint">Paste the app's Client ID. If the app is a <b>Confidential</b> client type (Twitch default), also paste the Client Secret — it's required to refresh the token (keeps the bot from disconnecting after a few hours). A <b>Public</b> client type works without a secret.</div>
+        </div>
+        <div id="tw_cards" style="margin-top:12px"></div>
+      </section>
+      <section class="card">
+        <div class="platform-title creds-toggle" onclick="this.parentElement.classList.toggle('creds-open')"><span class="caret">▸</span><span class="pbrand" style="color:#53d169"><svg class="plogo" viewBox="0 0 24 24" fill="currentColor"><path d="M1.333 0h8v5.333H12V2.667h2.667V0h8v8H20v2.667h-2.667v2.666H20V16h2.667v8h-8v-2.667H12v-2.666H9.333V24h-8Z"/></svg>Kick</span> <span style="font-weight:400;color:#6a6a73;font-size:12px">— credenciais</span></div>
+        <div class="creds">
+          <div class="grid">
+            <div><label>Client ID (App ID)</label><input id="kc_client_id"></div>
+            <div><label>Client Secret</label><input id="kc_client_secret" type="password"></div>
+            <div><label>Channel</label><input id="kc_channel"></div>
+            <div><label>Chat WS token</label><input id="kc_ws_token" type="password"></div>
+          </div>
+          <div class="hint">Kick is a confidential client — paste <b>Client ID</b> and <b>Client Secret</b>. Register redirect URI <code id="kc_redir"></code>. <b>Chat WS token</b> = <code>NEXT_PUBLIC_WEBSOCKET_CLIENT_TOKEN</code> do kick.com (pra ler o chat; a Kick usa Centrifugo agora). É público.</div>
+        </div>
+        <div id="kc_cards" style="margin-top:12px"></div>
+      </section>
+      <section class="card">
+        <div class="platform-title creds-toggle" onclick="this.parentElement.classList.toggle('creds-open')"><span class="caret">▸</span><span class="pbrand" style="color:#ff5c5c"><svg class="plogo" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>YouTube</span> <span style="font-weight:400;color:#6a6a73;font-size:12px">— credenciais</span></div>
+        <div class="creds">
+          <div class="grid">
+            <div><label>Client ID (Google OAuth)</label><input id="yt_client_id"></div>
+            <div><label>Client Secret</label><input id="yt_client_secret" type="password"></div>
+            <div><label>Video ID (opcional, blank = detecta a live ativa)</label><input id="yt_video_id"></div>
+          </div>
+          <div class="hint">Crie um projeto no <b>Google Cloud Console</b>, ative a <b>YouTube Data API v3</b>, crie um OAuth client tipo <b>Web application</b> e cole Client ID + Secret. Registre a redirect URI exata <code id="yt_redir"></code> no console. Faça o login pelo painel em <b>HTTPS</b> (o Google rejeita redirect http fora de localhost). Lê o chat da live e dispara actions/comandos como Twitch/Kick; a conta <b>bot</b> (opcional) envia mensagens.</div>
+        </div>
+        <div id="yt_cards" style="margin-top:12px"></div>
+      </section>
+      <button class="go" onclick="saveSettings()">Save app settings</button><span class="ok" id="acc_ok"></span>
+    </div>
+    <!-- APIs -->
+    <div class="page" data-page="apis">
+      <h1>APIs</h1><p class="sub">Credenciais de APIs de terceiros (doações/eventos). Guardadas em <code>secrets.json</code>.</p>
+      <section class="card">
+        <div class="platform-title creds-toggle" onclick="this.parentElement.classList.toggle('creds-open')"><span class="caret">▸</span><span class="pbrand" style="color:#19d27c"><svg class="plogo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><path d="M12 16s-3.2-2-3.2-4.3A1.8 1.8 0 0 1 12 10a1.8 1.8 0 0 1 3.2 1.7C15.2 14 12 16 12 16z" fill="currentColor" stroke="none"/></svg>LivePix</span> <span style="font-weight:400;color:#6a6a73;font-size:12px">— credenciais</span></div>
+        <div class="creds">
+          <div class="grid">
+            <div><label>Client ID</label><input id="lp_client_id"></div>
+            <div><label>Client Secret</label><input id="lp_client_secret" type="password"></div>
+          </div>
+          <div class="hint">OAuth2 (client credentials). Crie um app em livepix.gg e cole Client ID + Secret. Docs: <code>docs.livepix.gg/api</code>.</div>
+        </div>
+      </section>
+      <section class="card">
+        <div class="platform-title creds-toggle" onclick="this.parentElement.classList.toggle('creds-open')"><span class="caret">▸</span><span class="pbrand" style="color:#31c3a2"><svg class="plogo" viewBox="0 0 24 24" fill="currentColor"><path d="M8.6878 1.3459a1.365 1.365 0 0 0-.2734.0058c-.528.066-1.0133.1616-1.4843.3086A10.0568 10.0568 0 0 0 .3208 8.2697c-.147.471-.2445.9583-.3105 1.4863-.091.734.431 1.4041 1.166 1.4961.734.091 1.404-.43 1.496-1.164.05-.406.119-.7316.209-1.0196A7.3736 7.3736 0 0 1 7.727 4.221c.288-.09.6145-.157 1.0195-.207.735-.092 1.255-.7631 1.164-1.4981a1.3394 1.3394 0 0 0-1.2226-1.17Zm4.0488 5.2226c-2.629 0-3.9432.0007-4.9472.5117A4.684 4.684 0 0 0 5.7406 9.131c-.512 1.004-.5117 2.3183-.5117 4.9473v4.289c0 1.502-.001 2.2542.291 2.8282.257.505.6679.9149 1.1719 1.1719.574.292 1.326.291 2.828.291h6.9706c2.628 0 3.9442.0012 4.9472-.5098a4.6883 4.6883 0 0 0 2.0507-2.0508c.512-1.004.5117-2.3182.5117-4.9472v-1.0723c0-2.629.0003-3.9433-.5117-4.9473a4.6883 4.6883 0 0 0-2.0507-2.0508c-1.003-.511-2.3193-.5117-4.9472-.5117zm.537 6.7051c.741 0 1.3399.5998 1.3399 1.3398v2.6836c0 .74-.5988 1.3399-1.3398 1.3399-.74 0-1.3418-.5999-1.3418-1.3399v-2.6836c0-.74.6018-1.3398 1.3418-1.3398zm5.3632 0c.74 0 1.3399.5998 1.3399 1.3398v2.6836c0 .74-.5999 1.3399-1.3399 1.3399-.741 0-1.3398-.5999-1.3398-1.3399v-2.6836c0-.74.5989-1.3398 1.3398-1.3398z"/></svg>Streamlabs</span> <span style="font-weight:400;color:#6a6a73;font-size:12px">— credenciais</span></div>
+        <div class="creds">
+          <div class="grid">
+            <div><label>Client ID</label><input id="sl_client_id"></div>
+            <div><label>Client Secret</label><input id="sl_client_secret" type="password"></div>
+            <div><label>Socket API token</label><input id="sl_socket_token" type="password"></div>
+          </div>
+          <div class="hint">OAuth2 (client id/secret) pra API; o <b>Socket API token</b> (Streamlabs → Settings → API Settings) é o que escuta doações/alertas em tempo real. Docs: <code>dev.streamlabs.com</code>.</div>
+        </div>
+      </section>
+      <section class="card">
+        <div class="platform-title creds-toggle" onclick="this.parentElement.classList.toggle('creds-open')"><span class="caret">▸</span><span class="pbrand" style="color:#3ea6ff"><svg class="plogo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M12 2l8.5 5v10L12 22 3.5 17V7z"/><path d="M15 9.5A3.5 3.5 0 1 0 15 14.5"/></svg>StreamElements</span> <span style="font-weight:400;color:#6a6a73;font-size:12px">— credenciais</span></div>
+        <div class="creds">
+          <div class="grid">
+            <div><label>JWT token</label><input id="se_jwt" type="password"></div>
+            <div><label>Account ID (channel)</label><input id="se_account_id"></div>
+          </div>
+          <div class="hint">Pegue o <b>JWT token</b> e o <b>Account ID</b> em streamelements.com → Account → Channels/Show secrets. Eventos de tip em tempo real via astro websocket. Docs: <code>dev.streamelements.com</code>.</div>
+        </div>
+      </section>
+      <button class="go" onclick="saveSettings()">Save APIs</button>
+    </div>
+    <!-- Backups -->
+    <div class="page" data-page="backups">
+      <h1>Backup &amp; Restore</h1><p class="sub">Snapshots of all config (actions, commands, settings, variables, quotes, groups). Auto every hour (keeps 50). Restoring replaces everything.</p>
+      <section class="card">
+        <div class="row"><button class="go" onclick="createBackup()">Backup now</button><span class="ok" id="bk_ok"></span></div>
+        <ul id="backups"></ul>
+      </section>
+    </div>
+    <!-- Sounds -->
+    <div class="page" data-page="sounds">
+      <h1>Sounds</h1><p class="sub">Upload audio, play it through a Browser Source. In OBS add a Browser Source with URL <code id="ovl_url"></code>. Use sub-action <code>play_sound</code> (file = the name below).</p>
+      <section class="card">
+        <div class="row">
+          <input type="file" id="snd_file" accept="audio/*" style="flex:1 1 240px">
+          <button class="go" onclick="uploadSound()">Upload</button>
+          <span class="ok" id="snd_ok"></span>
+        </div>
+        <ul id="sounds"></ul>
+      </section>
+    </div>
+    <!-- Integrations -->
+    <div class="page" data-page="integrations">
+      <h1>Integrations</h1><p class="sub">OBS, VTube Studio, Throwing System (T.I.T.S.).</p>
+      <h2 class="intsec-title">Integrações nativas</h2>
+      <div class="intgrid">
+        <section class="card intcard" id="card_int_obs">
+          <div class="intcard-head" onclick="this.closest('.intcard').classList.toggle('open')">
+            <span class="caret2">▸</span>
+            <span class="pbrand" style="color:#7aa2d6"><svg class="plogo" viewBox="0 0 24 24" fill="currentColor"><path d="M12,24C5.383,24,0,18.617,0,12S5.383,0,12,0s12,5.383,12,12S18.617,24,12,24z M12,1.109 C5.995,1.109,1.11,5.995,1.11,12C1.11,18.005,5.995,22.89,12,22.89S22.89,18.005,22.89,12C22.89,5.995,18.005,1.109,12,1.109z M6.182,5.99c0.352-1.698,1.503-3.229,3.05-3.996c-0.269,0.273-0.595,0.483-0.844,0.78c-1.02,1.1-1.48,2.692-1.199,4.156 c0.355,2.235,2.455,4.06,4.732,4.028c1.765,0.079,3.485-0.937,4.348-2.468c1.848,0.063,3.645,1.017,4.7,2.548 c0.54,0.799,0.962,1.736,0.991,2.711c-0.342-1.295-1.202-2.446-2.375-3.095c-1.135-0.639-2.529-0.802-3.772-0.425 c-1.56,0.448-2.849,1.723-3.293,3.293c-0.377,1.25-0.216,2.628,0.377,3.772c-0.825,1.429-2.315,2.449-3.932,2.756 c-1.244,0.261-2.551,0.059-3.709-0.464c1.036,0.302,2.161,0.355,3.191-0.011c1.381-0.457,2.522-1.567,3.024-2.935 c0.556-1.49,0.345-3.261-0.591-4.54c-0.7-1.007-1.803-1.717-3.002-1.969c-0.38-0.068-0.764-0.098-1.148-0.134 c-0.611-1.231-0.834-2.66-0.528-3.996L6.182,5.99z"/></svg><span class="intcard-title">OBS</span></span>
+            <span class="intbadge red" id="obs_badge">—</span>
+            <label class="chk intsw" onclick="event.stopPropagation()" title="Ligar / desligar"><input type="checkbox" id="obs_switch" onchange="intToggle('obs',this.checked)"></label>
+          </div>
+          <div class="intcard-body">
+            <div class="intctl">
+              <button class="ghost" onclick="intOp('obs','connect')">Connect</button>
+              <button class="ghost" onclick="intOp('obs','on')">On</button>
+              <button class="ghost" onclick="intOp('obs','off')">Off</button>
+              <label class="chk" style="margin:0"><input type="checkbox" id="obs_enabled" onchange="intOp('obs',this.checked?'auto_on':'auto_off')"> Sempre conectar automaticamente</label>
+            </div>
+            <div class="grid">
+              <div><label>Address</label><input id="obs_address"></div>
+              <div><label>Port</label><input id="obs_port" type="number"></div>
+              <div><label>Password</label><input id="obs_password" type="password"></div>
+            </div>
+            <button class="go" style="margin-top:12px" onclick="intSave(this)">Save</button>
+          </div>
+        </section>
+        <section class="card intcard" id="card_int_vts">
+          <div class="intcard-head" onclick="this.closest('.intcard').classList.toggle('open')">
+            <span class="caret2">▸</span>
+            <span class="pbrand" style="color:#e978b0"><svg class="plogo" viewBox="0 0 64 64" aria-hidden="true"><defs><radialGradient id="vtsg" cx="62%" cy="20%" r="92%"><stop offset="0" stop-color="#ffd3e8"/><stop offset=".45" stop-color="#f79fca"/><stop offset="1" stop-color="#e565a7"/></radialGradient></defs><path d="M11 55C26 61 43 60 57 49 51 62 27 63 11 58Z" fill="url(#vtsg)"/><path transform="translate(30 52) rotate(-10) scale(1.2)" d="M0 0C-12-9-12-31-3-41-1-43 1-43 3-41 12-31 12-9 0 0Z" fill="url(#vtsg)"/><path transform="translate(32 52) rotate(44) scale(0.92)" d="M0 0C-12-9-12-31-3-41-1-43 1-43 3-41 12-31 12-9 0 0Z" fill="url(#vtsg)"/></svg><span class="intcard-title">VTube Studio</span></span>
+            <span class="intbadge red" id="vts_badge">—</span>
+            <label class="chk intsw" onclick="event.stopPropagation()" title="Ligar / desligar"><input type="checkbox" id="vts_switch" onchange="intToggle('vts',this.checked)"></label>
+          </div>
+          <div class="intcard-body">
+            <div class="intctl">
+              <button class="ghost" onclick="intOp('vts','connect')">Connect</button>
+              <button class="ghost" onclick="intOp('vts','on')">On</button>
+              <button class="ghost" onclick="intOp('vts','off')">Off</button>
+              <label class="chk" style="margin:0"><input type="checkbox" id="vts_enabled" onchange="intOp('vts',this.checked?'auto_on':'auto_off')"> Sempre conectar automaticamente</label>
+            </div>
+            <div class="grid">
+              <div><label>Address</label><input id="vts_address"></div>
+              <div><label>Port</label><input id="vts_port" type="number"></div>
+            </div>
+            <div class="hint">First connect shows an approval popup in VTube Studio; the token is saved.</div>
+            <button class="go" style="margin-top:12px" onclick="intSave(this)">Save</button>
+          </div>
+        </section>
+        <section class="card intcard" id="card_int_throwing">
+          <div class="intcard-head" onclick="this.closest('.intcard').classList.toggle('open')">
+            <span class="caret2">▸</span>
+            <span class="pbrand" style="color:#ff8a4c"><svg class="plogo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="16.5" cy="7.5" r="3.2"/><path d="M14.2 9.8 7 17M3 13h3M3 17h5M4.5 21h4"/></svg><span class="intcard-title">Throwing (T.I.T.S.)</span></span>
+            <span class="intbadge red" id="throwing_badge">—</span>
+            <label class="chk intsw" onclick="event.stopPropagation()" title="Ligar / desligar"><input type="checkbox" id="throwing_switch" onchange="intToggle('throwing',this.checked)"></label>
+          </div>
+          <div class="intcard-body">
+            <div class="intctl">
+              <button class="ghost" onclick="intOp('throwing','connect')">Connect</button>
+              <button class="ghost" onclick="intOp('throwing','on')">On</button>
+              <button class="ghost" onclick="intOp('throwing','off')">Off</button>
+              <label class="chk" style="margin:0"><input type="checkbox" id="throwing_enabled" onchange="intOp('throwing',this.checked?'auto_on':'auto_off')"> Sempre conectar automaticamente</label>
+            </div>
+            <div class="grid">
+              <div><label>Address</label><input id="throwing_address"></div>
+              <div><label>Port</label><input id="throwing_port" type="number"></div>
+            </div>
+            <button class="go" style="margin-top:12px" onclick="intSave(this)">Save</button>
+          </div>
+        </section>
+        <section class="card intcard" id="card_int_discord">
+          <div class="intcard-head" onclick="this.closest('.intcard').classList.toggle('open')">
+            <span class="caret2">▸</span>
+            <span class="pbrand" style="color:#8891f5"><svg class="plogo" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/></svg><span class="intcard-title">Discord Webhooks</span></span>
+            <label class="chk intsw" onclick="event.stopPropagation()" title="Ligar / desligar todos os webhooks"><input type="checkbox" id="discord_switch" onchange="discordToggle(this.checked)"></label>
+          </div>
+          <div class="intcard-body">
+            <p class="hint" style="margin-top:0">Name each webhook, then use the name in the <code>discord_webhook</code> sub-action's <code>url</code> field (e.g. "clips", "prints").</p>
+            <div class="row">
+              <input id="dw_name" placeholder="name (clips, prints…)" style="flex:1 1 140px">
+              <input id="dw_url" placeholder="https://discord.com/api/webhooks/…" style="flex:2 1 260px">
+              <button class="go" onclick="addDiscord()">Add</button>
+            </div>
+            <ul id="discord_list"></ul>
+            <button class="go" style="margin-top:12px" onclick="intSave(this)">Save</button>
+          </div>
+        </section>
+        <section class="card intcard" id="card_int_overlay">
+          <div class="intcard-head" onclick="this.closest('.intcard').classList.toggle('open')">
+            <span class="caret2">▸</span>
+            <span class="pbrand" style="color:#59c3c3"><svg class="plogo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M7 20h10M8 9h5M8 13h8"/></svg><span class="intcard-title">Chat Overlay</span></span>
+          </div>
+          <div class="intcard-body">
+            <p class="hint" style="margin-top:0">Cole seu próprio HTML/CSS/JS do overlay de chat (estilo Streamlabs). O bot alimenta o chat em <code>/events</code> (SSE).</p>
+            <p class="hint" style="margin-top:4px"><b>Overlay</b> (browser source, aparece na live pra todos): <code id="overlay_url">/overlay/chat</code></p>
+            <p style="margin:10px 0 2px;font-weight:700">Chat overlay code: <span class="hint" style="font-weight:400">(só o overlay público — não afeta o dock de moderação)</span></p>
+            <div style="display:flex;gap:10px;flex-wrap:wrap">
+              <div style="flex:1 1 200px;min-width:160px"><label>HTML</label><textarea id="ov_html" rows="10" spellcheck="false" style="width:100%;box-sizing:border-box;font-family:monospace"></textarea></div>
+              <div style="flex:1 1 200px;min-width:160px"><label>CSS</label><textarea id="ov_css" rows="10" spellcheck="false" style="width:100%;box-sizing:border-box;font-family:monospace"></textarea></div>
+              <div style="flex:1 1 200px;min-width:160px"><label>JS</label><textarea id="ov_js" rows="10" spellcheck="false" style="width:100%;box-sizing:border-box;font-family:monospace"></textarea></div>
+            </div>
+            <div style="margin-top:16px;border-top:1px solid #2a2f3a;padding-top:12px">
+              <p style="margin:0 0 8px;font-weight:700">Ignorar no overlay <span class="hint" style="font-weight:400">(só esconde no overlay público, o dock continua vendo tudo)</span></p>
+              <div style="display:flex;gap:10px;flex-wrap:wrap">
+                <div style="flex:1 1 200px;min-width:160px"><label>Usuários <span class="hint">(um por linha)</span></label><textarea id="ov_ign_users" rows="5" spellcheck="false" placeholder="berbskk&#10;berbos_robo" style="width:100%;box-sizing:border-box;font-family:monospace"></textarea></div>
+                <div style="flex:1 1 200px;min-width:160px"><label>Prefixos de comando <span class="hint">(um por linha)</span></label><textarea id="ov_ign_prefixes" rows="5" spellcheck="false" placeholder="!&#10;?" style="width:100%;box-sizing:border-box;font-family:monospace"></textarea></div>
+              </div>
+              <div style="margin-top:10px">
+                <label>Rewards ignorados</label>
+                <div id="ov_ign_rewards"></div>
+                <button class="ghost" type="button" onclick="addIgnoreReward('')" style="margin-top:6px">+ reward</button>
+              </div>
+            </div>
+            <button class="go" style="margin-top:12px" onclick="saveOverlayCfg(this)">Save</button>
+          </div>
+        </section>
+        <section class="card intcard" id="card_int_streaminfo">
+          <div class="intcard-head" onclick="this.closest('.intcard').classList.toggle('open')">
+            <span class="caret2">▸</span>
+            <span class="pbrand" style="color:#d6a75a"><svg class="plogo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg><span class="intcard-title">Stream Info (título + categoria)</span></span>
+          </div>
+          <div class="intcard-body">
+            <p class="hint" style="margin-top:0">Browser docks pro seu OBS. A edição de título/categoria fica na própria dock.</p>
+            <p class="hint" style="margin-top:4px"><b>Stream Info</b> (editar título + categoria dentro do OBS): <code id="si_dock_url">/dock/streaminfo</code></p>
+            <p class="hint" style="margin-top:4px"><b>Chat</b> (ler + moderar): <code id="dock_chat_url">/dock/chat</code></p>
+            <p class="hint" style="margin-top:4px"><b>Eventos</b> (subs, recompensas, bits, raids, follows): <code id="dock_events_url">/dock/events</code></p>
+          </div>
+        </section>
+      </div>
+      <h2 class="intsec-title">Plugins</h2>
+      <div class="row" style="margin:0 0 12px">
+        <button class="go" onclick="restartBot(this)">Reiniciar bot (carregar plugins novos)</button>
+        <span class="hint" id="restart_hint" style="align-self:center"></span>
+      </div>
+      <div class="intgrid" id="intgrid_plugins">
+        <p class="hint" id="plugins_empty" style="grid-column:1/-1;margin:0">Nenhum plugin instalado. Coloque um arquivo <code>.so</code> em <code>plugins/</code> e reinicie o bot.</p>
+      </div>
+    </div>
+  </main>
+</div>
+<script>
+const NAV = [
+  ["grp","Overview"], ["dashboard","Dashboard"], ["chat","Chat ao vivo"], ["docs","Docs"],
+  ["grp","Triggers"], ["commands","Commands"], ["events","Events"], ["rewards","Rewards"], ["timers","Timers"],
+  ["grp","Management"], ["actions","Actions"], ["queues","Queues"], ["variables","Variables"], ["uservars","User Vars"], ["quotes","Quotes"], ["usergroups","User Groups"],
+  ["grp","Connections"], ["accounts","Accounts"], ["integrations","Integrations"], ["apis","APIs"], ["sounds","Sounds"], ["backups","Backups"],
+];
+const SA_KINDS = {
+  send_message:[["text","text"]], reply:[["text","text"]], delay:[["ms","number"]], set_variable:[["name","text"],["value","text"]],
+  obs_scene:[["scene","text"]], obs_source:[["scene","text"],["source","text"],["visible","bool"]],
+  obs_record_toggle:[], obs_filter:[["source","text"],["filter","text"],["visible","bool"]],
+  obs_replay_start:[], obs_replay_stop:[], obs_replay_save:[],
+  obs_stream_start:[], obs_stream_stop:[], obs_stream_toggle:[],
+  vts_hotkey:[["hotkey","text"]], throw:[["item","text"]],
+  discord_webhook:[["url","text"],["content","text"],["username","text"]],
+  twitch_set_title:[["title","text"]], twitch_set_game:[["game","text"]],
+  twitch_announce:[["text","text"],["color","text"]], twitch_clip:[], twitch_marker:[["description","text"]],
+  twitch_shoutout:[["target","text"]], kick_message:[["text","text"]],
+  kick_ban:[["target","text"],["duration","number"],["reason","text"]], kick_unban:[["target","text"]],
+  kick_clear_chat:[],
+  twitch_ban:[["target","text"],["duration","number"],["reason","text"]], twitch_unban:[["target","text"]],
+  reward:[["target","reward"],["op","select:enable|disable|toggle|cost"],["cost","number"]],
+  twitch_clear_chat:[], twitch_commercial:[["length","number"]],
+  twitch_chat_mode:[["mode","text"],["enabled","bool"],["duration","number"]],
+  twitch_poll:[["title","text"],["choices","text"],["duration","number"]],
+  add_to_variable:[["name","text"],["amount","number"]],
+  if_stop:[["name","text"],["op","text"],["value","text"]],
+  if_skip:[["name","text"],["op","text"],["value","text"],["skip","number"]], stop:[],
+  loop_break:[], loop_continue:[],
+  fetch_url:[["url","text"],["into","text"]], get_random_number:[["min","number"],["max","number"],["into","text"]],
+  file_write:[["path","text"],["text","text"],["append","bool"]], file_read:[["path","text"],["into","text"]],
+  timer_enable:[["name","text"]], timer_disable:[["name","text"]], timer_toggle:[["name","text"]],
+  log_message:[["text","text"]], run_action:[["name","text"]], fire_event:[["event","text"]],
+  play_sound:[["file","sound"],["volume","number"]],
+  user_group_add:[["group","text"],["user","text"]], user_group_remove:[["group","text"],["user","text"]],
+  set_user_variable:[["name","text"],["user","text"],["value","text"]],
+  add_to_user_variable:[["name","text"],["user","text"],["amount","number"]],
+  get_user_variable:[["name","text"],["user","text"],["into","text"]],
+  format_duration:[["from","text"],["into","text"]],
+  quote_add:[["text","text"]], quote_show:[["id","text"]],
+  twitch_raid:[["target","text"]], twitch_followage:[["user","text"],["into","text"]],
+  twitch_ad_snooze:[], twitch_get_follow_count:[["into","text"]], twitch_get_sub_count:[["into","text"]],
+  twitch_whisper:[["target","text"],["text","text"]],
+  twitch_mod:[["target","text"]], twitch_unmod:[["target","text"]],
+  twitch_vip:[["target","text"]], twitch_unvip:[["target","text"]],
+  twitch_warn:[["target","text"],["reason","text"]],
+  twitch_prediction:[["title","text"],["outcomes","text"],["window","number"]],
+  if_block:[["name","text"],["op","text"],["value","text"]],
+  repeat_block:[["count","number"]],
+  while_block:[["name","text"],["op","text"],["value","text"],["max_iter","number"]],
+  switch_block:[["name","text"]],
+};
+// One-line docs per sub-action kind (shown in the Docs tab).
+const SA_DOCS = {
+  send_message:"Manda mensagem no chat da Twitch.", reply:"Responde no chat de ONDE o comando veio (Twitch ou Kick).",
+  delay:"Espera X milissegundos antes da próxima sub-ação.", set_variable:"Grava um valor numa variável global.",
+  add_to_variable:"Soma um número a uma variável global (negativo subtrai).",
+  if_stop:"Se a comparação for falsa, PARA a action aqui.", if_skip:"Se falsa, pula as próximas N sub-ações.",
+  stop:"Encerra a action.", loop_break:"Sai do loop (repeat/while) atual.", loop_continue:"Pula pra próxima volta do loop.",
+  fetch_url:"GET numa URL, salva o corpo numa variável.", get_random_number:"Número aleatório entre min e max numa variável.",
+  file_write:"Escreve texto num arquivo (append ou sobrescreve).", file_read:"Lê um arquivo inteiro pra uma variável.",
+  timer_enable:"Liga um timer.", timer_disable:"Desliga um timer.", timer_toggle:"Inverte um timer.",
+  log_message:"Escreve uma linha no feed de eventos.", run_action:"Roda outra action pelo nome.",
+  fire_event:"Dispara um evento custom (roda triggers ligados a ele).",
+  user_group_add:"Põe um usuário num grupo custom.", user_group_remove:"Tira um usuário de um grupo.",
+  set_user_variable:"Grava valor por-usuário (branco = quem disparou).", add_to_user_variable:"Soma número a uma variável por-usuário.",
+  get_user_variable:"Lê uma variável por-usuário pra uma variável normal.", format_duration:"Minutos → '1y 3m 16d 15h 23min'.",
+  quote_add:"Salva uma quote.", quote_show:"Manda uma quote (id, ou aleatória se vazio).",
+  play_sound:"Toca um áudio pelo Browser Source (/overlay).",
+  twitch_set_title:"Muda o título da live.", twitch_set_game:"Muda a categoria/jogo (por nome).",
+  twitch_announce:"Announcement no chat (color: blue/green/orange/purple/primary).", twitch_clip:"Cria um clip.",
+  twitch_marker:"Cria um stream marker.", twitch_shoutout:"Shoutout de um canal.",
+  twitch_ban:"Bane (duration 0) ou timeout (duration segundos) um usuário.", twitch_unban:"Desbane.",
+  twitch_clear_chat:"Limpa o chat.", twitch_commercial:"Roda ad (length segundos).",
+  twitch_chat_mode:"Modo do chat (emote/followers/subscribers/slow) on/off + duração.", twitch_poll:"Cria enquete (choices separadas por |).",
+  twitch_mod:"Dá moderador.", twitch_unmod:"Tira moderador.", twitch_vip:"Dá VIP.", twitch_unvip:"Tira VIP.",
+  twitch_warn:"Avisa (warn) um usuário.", twitch_prediction:"Cria predição (outcomes separados por |).",
+  twitch_raid:"Inicia um raid pra outro canal.", twitch_followage:"Há quanto tempo o usuário segue, pra uma variável (ou 'não segue').",
+  twitch_ad_snooze:"Adia o próximo ad.", twitch_get_follow_count:"Total de followers numa variável.",
+  twitch_get_sub_count:"Total de subs numa variável.", twitch_whisper:"Manda whisper pra um usuário.",
+  kick_message:"Manda mensagem no chat da Kick.", kick_ban:"Bane (duration 0) ou timeout (duration minutos) na Kick.", kick_unban:"Desbane na Kick.",
+  kick_clear_chat:"Limpa o chat da Kick (apaga as mensagens recentes vistas desde que o bot subiu; a Kick não tem limpar tudo).",
+  reward:"Liga/desliga, inverte (toggle) ou muda o custo de um reward (Twitch, Kick ou linkado — linkado faz nos dois). cost só é usado em op=cost.",
+  obs_scene:"Troca a cena do OBS.", obs_source:"Mostra/esconde uma fonte numa cena.", obs_record_toggle:"Liga/desliga gravação.",
+  obs_filter:"Liga/desliga um filtro de fonte.", obs_replay_start:"Liga replay buffer.", obs_replay_stop:"Desliga replay buffer.",
+  obs_replay_save:"Salva o replay buffer.", obs_stream_start:"Começa a transmitir.", obs_stream_stop:"Para a transmissão.",
+  obs_stream_toggle:"Inverte a transmissão.",
+  vts_hotkey:"Dispara um hotkey do VTube Studio.", throw:"Joga um item no Throwing System (T.I.T.S.).",
+  discord_webhook:"Posta num canal do Discord via webhook (url = nome do webhook ou URL literal).",
+  if_block:"Se verdadeiro roda 'then', senão 'else' (blocos aninhados).", repeat_block:"Roda 'body' N vezes.",
+  while_block:"Roda 'body' enquanto a comparação for verdadeira (até max_iter).", switch_block:"Compara a variável com cada caso (eq) e roda o corpo.",
+};
+// Block kinds hold child sub-action lists under these keys.
+const BLOCK_LISTS = { if_block:["then","else"], repeat_block:["body"], while_block:["body"], switch_block:["default"] };
+// Grouping for the sub-action picker (matches Streamer.bot's nested Add menu).
+const SA_GROUPS = {
+  Core:["send_message","reply","delay","set_variable","add_to_variable","if_stop","if_skip","stop","loop_break","loop_continue","fetch_url","get_random_number","user_group_add","user_group_remove","set_user_variable","add_to_user_variable","get_user_variable","format_duration","file_write","file_read","timer_enable","timer_disable","timer_toggle","log_message","run_action","fire_event","quote_add","quote_show"],
+  Twitch:["twitch_set_title","twitch_set_game","twitch_announce","twitch_clip","twitch_marker","twitch_shoutout",
+    "twitch_ban","twitch_unban","twitch_clear_chat","twitch_commercial","twitch_chat_mode","twitch_poll",
+    "twitch_mod","twitch_unmod","twitch_vip","twitch_unvip","twitch_warn","twitch_prediction",
+    "twitch_raid","twitch_followage","twitch_ad_snooze","twitch_get_follow_count","twitch_get_sub_count","twitch_whisper"],
+  Kick:["kick_message","kick_ban","kick_unban","kick_clear_chat"],
+  Rewards:["reward"],
+  OBS:["obs_scene","obs_source","obs_record_toggle","obs_filter","obs_replay_start","obs_replay_stop","obs_replay_save","obs_stream_start","obs_stream_stop","obs_stream_toggle"],
+  Sounds:["play_sound"],
+  Integrations:["vts_hotkey","throw","discord_webhook"],
+  "Logic blocks":["if_block","repeat_block","while_block","switch_block"],
+};
+let draftSubs=[];
+function esc(s){ return (s==null?'':String(s)).replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
+function j(method,url,body){ return fetch(url,{method,headers:{'content-type':'application/json'},body:body?JSON.stringify(body):undefined}).then(r=>r.json()); }
+
+const NAV_ICONS={
+  dashboard:'<path d="M3 13h8V3H3zM13 21h8V3h-8zM3 21h8v-6H3z"/>',
+  docs:'<path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h8"/>',
+  chat:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+  commands:'<path d="M4 17l6-5-6-5M12 19h8"/>',
+  events:'<path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/>',
+  rewards:'<path d="M20 12v10H4V12M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/>',
+  timers:'<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M9 2h6"/>',
+  actions:'<path d="M13 2L3 14h7l-1 8 10-12h-7z"/>',
+  queues:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',
+  variables:'<path d="M8 3H7a2 2 0 0 0-2 2v4a2 2 0 0 1-2 2 2 2 0 0 1 2 2v4a2 2 0 0 0 2 2h1M16 3h1a2 2 0 0 1 2 2v4a2 2 0 0 0 2 2 2 2 0 0 0-2 2v4a2 2 0 0 1-2 2h-1"/>',
+  uservars:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+  quotes:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+  usergroups:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 5a3.5 3.5 0 0 1 0 7M18 20a6.5 6.5 0 0 0-3-5.4"/>',
+  accounts:'<circle cx="7.5" cy="15.5" r="4.5"/><path d="M10.5 12.5L20 3M16 7l3 3M14 9l2 2"/>',
+  integrations:'<path d="M9 3a2 2 0 0 1 4 0v2h3a1 1 0 0 1 1 1v3h2a2 2 0 0 1 0 4h-2v3a1 1 0 0 1-1 1h-3v-2a2 2 0 0 0-4 0v2H6a1 1 0 0 1-1-1v-3a2 2 0 0 1 0-4V6a1 1 0 0 1 1-1h3z"/>',
+  sounds:'<path d="M11 5L6 9H2v6h4l5 4zM15.5 8.5a5 5 0 0 1 0 7M19 5a9 9 0 0 1 0 14"/>',
+  backups:'<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/>',
+  apis:'<path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1.5 1.5M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1.5-1.5"/>',
+};
+const svgIcon=id=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${NAV_ICONS[id]||''}</svg>`;
+const nav=document.getElementById('nav');
+NAV.forEach(([id,label])=>{ if(id==='grp'){ const d=document.createElement('div'); d.className='grp'; d.textContent=label; nav.appendChild(d); }
+  else { const a=document.createElement('a'); a.dataset.p=id; a.title=label; a.innerHTML=`${svgIcon(id)}<span>${label}</span>`; a.onclick=()=>show(id); nav.appendChild(a); } });
+function toast(msg,isErr){ let t=document.getElementById('toast'); if(!t){ t=document.createElement('div'); t.id='toast'; t.className='toast'; document.body.appendChild(t); }
+  t.textContent=msg; t.classList.toggle('err',!!isErr); t.classList.add('show');
+  clearTimeout(window._toastT); window._toastT=setTimeout(()=>t.classList.remove('show'),2800); }
+function show(id){ document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.dataset.page===id));
+  document.querySelectorAll('aside a').forEach(a=>a.classList.toggle('active',a.dataset.p===id)); location.hash=id;
+  if(id==='rewards') loadRewards();
+  if(id==='docs') loadDocs();
+  if(id==='queues') loadQueues();
+  if(id==='quotes') loadQuotes();
+  if(id==='sounds') loadSounds();
+  if(id==='integrations') loadIntegrations();
+  if(id==='usergroups') loadUserGroups();
+  if(id==='uservars') loadUserVars();
+  if(id==='backups') loadBackups(); }
+function bkDate(name){ const m=name.match(/data-(\d+)\.json/); return m?new Date(parseInt(m[1],10)*1000).toLocaleString():name; }
+async function loadBackups(){ const bs=await j('GET','/api/backups'); const ul=document.getElementById('backups'); if(!ul)return; ul.innerHTML='';
+  bs.forEach(n=>{ const li=document.createElement('li'); li.innerHTML=`<span style="flex:1">${bkDate(n)} <span class="tag">${esc(n)}</span></span>`;
+    const r=document.createElement('button'); r.className='run'; r.textContent='restore'; r.onclick=async()=>{ if(!confirm('Restore '+bkDate(n)+'? This replaces all current config.'))return; const d=await j('POST','/api/backups/'+encodeURIComponent(n)+'/restore'); if(d.ok){ alert('Restored.'); loadActions&&loadActions(); loadCmds&&loadCmds(); } else alert(d.error); };
+    const dl=document.createElement('a'); dl.textContent='download'; dl.href='/api/backups/'+encodeURIComponent(n); dl.setAttribute('download',n); dl.className='tag'; dl.style.cursor='pointer'; dl.style.textDecoration='none';
+    const x=document.createElement('button'); x.className='del'; x.textContent='x'; x.onclick=async()=>{await fetch('/api/backups/'+encodeURIComponent(n),{method:'DELETE'});loadBackups();};
+    li.appendChild(r); li.appendChild(dl); li.appendChild(x); ul.appendChild(li); }); }
+async function createBackup(){ const r=await j('POST','/api/backups'); const ok=document.getElementById('bk_ok'); ok.textContent=r.ok?'saved ✓':('error: '+r.error); setTimeout(()=>ok.textContent='',1500); loadBackups(); }
+async function loadUserVars(){ const uv=await j('GET','/api/uservariables'); const box=document.getElementById('uservars'); if(!box)return; box.innerHTML='';
+  const names=Object.keys(uv); if(!names.length){ box.innerHTML='<p class="hint">No user variables yet.</p>'; return; }
+  names.forEach(name=>{ const d=document.createElement('div'); d.className='acct'; d.style.padding='10px 14px';
+    d.innerHTML=`<b>${esc(name)}</b>`;
+    const rows=Object.entries(uv[name]).sort((a,b)=>{ const na=parseFloat(a[1]),nb=parseFloat(b[1]); if(!isNaN(na)&&!isNaN(nb))return nb-na; return a[0].localeCompare(b[0]); });
+    const t=document.createElement('div'); t.style.marginTop='6px';
+    t.innerHTML=rows.map((r,i)=>`<div style="display:flex;gap:8px;padding:2px 0"><span style="width:28px;color:#9aa0a6">${i+1}.</span><span style="flex:1">${esc(r[0])}</span><b>${esc(r[1])}</b></div>`).join('');
+    d.appendChild(t); box.appendChild(d); }); }
+async function loadUserGroups(){ const g=await j('GET','/api/usergroups'); const box=document.getElementById('usergroups'); if(!box)return; box.innerHTML='';
+  Object.entries(g).forEach(([name,members])=>{ const d=document.createElement('div'); d.className='acct'; d.style.padding='10px 14px';
+    const head=document.createElement('div'); head.style.display='flex'; head.style.alignItems='center'; head.style.gap='8px';
+    head.innerHTML=`<b style="flex:1">${esc(name)} <span class="tag">${members.length}</span></b>`;
+    const del=document.createElement('button'); del.className='del'; del.textContent='delete group'; del.onclick=async()=>{await fetch('/api/usergroups/'+encodeURIComponent(name),{method:'DELETE'});loadUserGroups();}; head.appendChild(del);
+    d.appendChild(head);
+    const ul=document.createElement('div'); ul.style.marginTop='6px'; ul.style.display='flex'; ul.style.flexWrap='wrap'; ul.style.gap='6px';
+    members.forEach(u=>{ const t=document.createElement('span'); t.className='tag'; t.innerHTML=esc(u)+' ';
+      const x=document.createElement('a'); x.textContent='×'; x.style.cursor='pointer'; x.style.color='#ef4444'; x.onclick=async()=>{await fetch('/api/usergroups/'+encodeURIComponent(name)+'/'+encodeURIComponent(u),{method:'DELETE'});loadUserGroups();};
+      t.appendChild(x); ul.appendChild(t); });
+    d.appendChild(ul); box.appendChild(d); }); }
+async function addUserGroup(){ const group=ug_group.value.trim(); if(!group)return;
+  await j('POST','/api/usergroups',{group,user:ug_user.value.trim()}); ug_user.value=''; loadUserGroups(); }
+async function loadSounds(){ const url=document.getElementById('ovl_url'); if(url) url.textContent=location.origin+'/overlay';
+  const ss=await j('GET','/api/sounds'); window._sounds=ss||[]; const imgs=await j('GET','/api/images')||[]; const durs=await j('GET','/api/image_durations')||{}; const ul=document.getElementById('sounds'); if(!ul)return; ul.innerHTML='';
+  ss.forEach(n=>{ const li=document.createElement('li'); li.innerHTML=`<span style="flex:1"><code>${esc(n)}</code></span>`;
+    const p=document.createElement('button'); p.className='run'; p.textContent='play'; p.onclick=()=>fetch('/api/sounds/'+encodeURIComponent(n)+'/play',{method:'POST'});
+    const img=imgs.find(i=>i.startsWith(n+'.'));
+    const ib=document.createElement('button'); ib.className='run';
+    if(img){ ib.textContent='remove image'; ib.title=img; ib.onclick=async()=>{await fetch('/api/sounds/'+encodeURIComponent(n)+'/image',{method:'DELETE'});loadSounds();};
+      const sec=document.createElement('input'); sec.type='text'; sec.inputMode='decimal'; sec.style.width='56px'; sec.title='segundos (ex. 4,5 ou 0,15)';
+      sec.value=String(durs[n]==null?4:durs[n]).replace('.',','); const unit=document.createElement('span'); unit.textContent='s'; unit.style.margin='0 6px 0 2px';
+      sec.onchange=async()=>{ const v=parseFloat(sec.value.replace(',','.')); if(!isFinite(v)||v<0){sec.value='4';return;}
+        await j('POST','/api/sounds/'+encodeURIComponent(n)+'/image/duration',{secs:v}); sec.value=String(v).replace('.',','); };
+      li.appendChild(sec); li.appendChild(unit);
+    }
+    else { ib.textContent='image'; ib.onclick=()=>{ const fi=document.createElement('input'); fi.type='file'; fi.accept='image/*';
+      fi.onchange=async()=>{ const f=fi.files[0]; if(!f)return; const ext=(f.name.split('.').pop()||'png');
+        await fetch('/api/sounds/'+encodeURIComponent(n)+'/image?ext='+encodeURIComponent(ext),{method:'POST',body:f}); loadSounds(); };
+      fi.click(); }; }
+    const d=document.createElement('button'); d.className='del'; d.textContent='x'; d.onclick=async()=>{await fetch('/api/sounds/'+encodeURIComponent(n),{method:'DELETE'});loadSounds();};
+    li.appendChild(p); li.appendChild(ib); li.appendChild(d); ul.appendChild(li); }); }
+async function uploadSound(){ const f=document.getElementById('snd_file').files[0]; if(!f)return;
+  const ok=document.getElementById('snd_ok'); ok.textContent='uploading…';
+  const r=await fetch('/api/sounds/'+encodeURIComponent(f.name),{method:'POST',body:f}).then(r=>r.json());
+  ok.textContent=r.ok?'uploaded ✓':('error: '+r.error); setTimeout(()=>ok.textContent='',2000); loadSounds(); }
+async function loadQuotes(){ const qs=await j('GET','/api/quotes'); const ul=document.getElementById('quotes'); if(!ul)return; ul.innerHTML='';
+  qs.forEach(q=>{ const li=document.createElement('li');
+    li.innerHTML=`<span class="tag">#${q.id}</span> <span style="flex:1">${esc(q.text)}${q.user?(' <span style="color:#9aa0a6">— '+esc(q.user)+'</span>'):''}</span>`;
+    const b=document.createElement('button'); b.className='del'; b.textContent='x'; b.onclick=async()=>{await fetch('/api/quotes/'+q.id,{method:'DELETE'});loadQuotes();}; li.appendChild(b); ul.appendChild(li); }); }
+async function addQuote(){ const text=q_text.value.trim(); if(!text)return;
+  await j('POST','/api/quotes',{text,user:q_user.value.trim(),game:q_game.value.trim()});
+  q_text.value='';q_user.value='';q_game.value=''; loadQuotes(); }
+function loadDocs(){
+  const vars=[["%userName% / %user%","Quem disparou o comando"],["%rawInput% / %input%","Tudo depois do comando"],
+    ["%input0% %input1% …","Palavra N depois do comando (vazio se não houver)"],["%userId%","ID numérico de quem disparou (Twitch/Kick)"],["%userColor%","Cor do nick de quem disparou"],
+    ["%NOME% / $var.NOME","Valor de uma variável global"],
+    ["$user","Atalho pra quem disparou"],["%clipUrl% %clipCreator% %clipTitle%","Preenchidas no evento clipcreated"]];
+  document.getElementById('docs_vars').innerHTML=vars.map(v=>`<div class="arow"><code style="flex:0 0 220px">${esc(v[0])}</code><span>${esc(v[1])}</span></div>`).join('');
+  const evs=[...document.getElementById('ev_event').options].map(o=>o.value);
+  document.getElementById('docs_events').innerHTML='<div class="hint">Dispara uma action quando o evento ocorre. Rewards: use o botão "Bind to action" na aba Rewards (vincula pelo ID, sobrevive a renomear).</div>'+
+    evs.map(e=>`<span class="tag" style="margin:2px">${esc(e)}</span>`).join(' ');
+  let html='';
+  Object.entries(SA_GROUPS).forEach(([grp,ks])=>{ html+=`<div class="agrp">${esc(grp)}</div>`;
+    ks.forEach(k=>{ const fields=(SA_KINDS[k]||[]).map(f=>f[0]).join(', ');
+      html+=`<div class="arow"><code style="flex:0 0 200px">${esc(k)}</code><span style="flex:1">${esc(SA_DOCS[k]||'')}${fields?` <span style="color:#6b7280">(${esc(fields)})</span>`:''}</span></div>`; }); });
+  document.getElementById('docs_subs').innerHTML=html; }
+async function loadQueues(){ const qs=await j('GET','/api/queues'); const ul=document.getElementById('queues'); if(!ul)return; ul.innerHTML='';
+  qs.forEach(q=>{ const li=document.createElement('li');
+    li.innerHTML=`<b>${esc(q.name)}</b> <span class="tag">${q.blocking?'blocking':'non-blocking'}</span> ${q.paused?'<span class="tag" style="color:#f59e0b">paused</span>':''} <span style="flex:1;color:#9aa0a6">pending ${q.pending} · done ${q.completed}</span>`;
+    const mk=(txt,op)=>{ const b=document.createElement('button'); b.className='ghost'; b.textContent=txt; b.onclick=()=>fetch('/api/queues/'+encodeURIComponent(q.name)+'/'+op,{method:'POST'}).then(loadQueues); return b; };
+    li.appendChild(mk(q.paused?'resume':'pause', q.paused?'resume':'pause')); li.appendChild(mk('clear','clear'));
+    ul.appendChild(li); }); }
+async function declareQueue(){ const name=q_name.value.trim(); if(!name)return;
+  await j('POST','/api/queues',{name,blocking:q_blocking.checked}); q_name.value='';q_blocking.checked=false; loadQueues(); }
+
+// sub-action builder
+// --- visual sub-action tree editor ---
+function newSub(kind){ const o={kind}; (SA_KINDS[kind]||[]).forEach(([n,t])=>{ o[n]= t==='bool'?false:(t==='number'?0:''); });
+  (BLOCK_LISTS[kind]||[]).forEach(L=>o[L]=[]); if(kind==='switch_block') o.cases=[];
+  if(kind==='play_sound') o.volume=1; return o; }
+function addPicker(onpick){ const s=document.createElement('select'); s.className='sa-add';
+  const d=document.createElement('option'); d.value=''; d.textContent='+ add sub-action…'; s.appendChild(d);
+  Object.entries(SA_GROUPS).forEach(([g,ks])=>{ const og=document.createElement('optgroup'); og.label=g;
+    ks.forEach(k=>{ const o=document.createElement('option'); o.value=k; o.textContent=k; og.appendChild(o); }); s.appendChild(og); });
+  s.onchange=()=>{ if(s.value){ onpick(s.value); s.value=''; renderDraft(); } }; return s; }
+function fieldInput(item,name,type){
+  if(type==='bool'){ const l=document.createElement('label'); l.className='chk'; l.style.margin='0';
+    const c=document.createElement('input'); c.type='checkbox'; c.checked=!!item[name]; c.onchange=()=>item[name]=c.checked;
+    l.appendChild(c); l.appendChild(document.createTextNode(' '+name)); return l; }
+  if(type==='reward') return rewardSelect(item,name);
+  if(type==='sound') return soundSelect(item,name);
+  if(type.startsWith('select:')){ const opts=type.slice(7).split('|'); const s=document.createElement('select'); s.style.flex='0 1 110px';
+    opts.forEach(o=>{ const op=document.createElement('option'); op.value=o; op.textContent=o; s.appendChild(op); });
+    if(!item[name]) item[name]=opts[0]; s.value=item[name]; s.onchange=()=>item[name]=s.value; return s; }
+  if(type==='number' && name==='ms'){ const w=document.createElement('span'); w.style.cssText='display:inline-flex;align-items:center;gap:6px;flex:1 1 170px';
+    const i=document.createElement('input'); i.type='number'; i.placeholder='tempo'; i.title='milissegundos — 1000 = 1 segundo, 60000 = 1 minuto';
+    i.value=item[name]==null?'':item[name]; i.style.flex='1';
+    i.oninput=()=>item[name]=i.value===''?0:Number(i.value);
+    const u=document.createElement('small'); u.textContent='ms (1000 = 1s)'; u.style.cssText='color:var(--muted);white-space:nowrap';
+    w.appendChild(i); w.appendChild(u); return w; }
+  const i=document.createElement('input'); i.placeholder=name; i.type=type==='number'?'number':'text';
+  i.value=item[name]==null?'':item[name]; i.style.flex='1 1 100px';
+  i.oninput=()=>{ item[name]= type==='number'?(i.value===''?0:Number(i.value)):i.value; }; return i; }
+function rewardSelect(item,name){ const s=document.createElement('select'); s.style.flex='1 1 160px';
+  const fill=()=>{ s.innerHTML=''; const cur=item[name]||''; const links=window._rwLinks||[]; const rws=window._rwAll||[];
+    const add=(p,val,txt)=>{ const o=document.createElement('option'); o.value=val; o.textContent=txt; (p||s).appendChild(o); };
+    add(null,'','— escolha um reward —');
+    const grp=(label,items,fn)=>{ if(!items.length)return; const og=document.createElement('optgroup'); og.label=label; items.forEach(fn.bind(null,og)); s.appendChild(og); };
+    grp('Linkados',links,(og,l)=>add(og,'link:'+l.key,l.title||l.key));
+    grp('Twitch',rws.filter(r=>r.platform==='twitch'),(og,r)=>add(og,'twitch:'+r.id,r.title));
+    grp('Kick',rws.filter(r=>r.platform==='kick'),(og,r)=>add(og,'kick:'+r.id,r.title));
+    if(cur && ![...s.querySelectorAll('option')].some(o=>o.value===cur)) add(null,cur,cur+' (?)');
+    s.value=cur; };
+  fill(); s.onchange=()=>item[name]=s.value;
+  if(!(window._rwAll&&window._rwAll.length)||!window._rwLinks){ Promise.all([j('GET','/api/rewards'),j('GET','/api/reward-links')])
+    .then(([r,l])=>{ window._rwAll=r.rewards||[]; window._rwLinks=l||[]; fill(); }).catch(()=>{}); }
+  return s; }
+function soundSelect(item,name){ const s=document.createElement('select'); s.style.flex='1 1 160px';
+  const fill=()=>{ s.innerHTML=''; const cur=item[name]||''; const snds=window._sounds||[];
+    const add=(val,txt)=>{ const o=document.createElement('option'); o.value=val; o.textContent=txt; s.appendChild(o); };
+    add('','— escolha um som —'); snds.forEach(n=>add(n,n));
+    if(cur && !snds.includes(cur)) add(cur,cur+' (?)');
+    s.value=cur; };
+  fill(); s.onchange=()=>item[name]=s.value;
+  if(!window._sounds){ j('GET','/api/sounds').then(ss=>{ window._sounds=ss||[]; fill(); }).catch(()=>{}); }
+  return s; }
+function renderNode(list,idx){ const item=list[idx]; const d=document.createElement('div'); d.className='sa-node';
+  const head=document.createElement('div'); head.className='sa-head';
+  const tag=document.createElement('code'); tag.textContent=item.kind; head.appendChild(tag);
+  const fields=document.createElement('div'); fields.className='sa-fields';
+  (SA_KINDS[item.kind]||[]).forEach(([n,t])=>fields.appendChild(fieldInput(item,n,t))); head.appendChild(fields);
+  const sp=document.createElement('span'); sp.style.flex='1'; head.appendChild(sp);
+  const mk=(txt,fn)=>{ const b=document.createElement('button'); b.className='del'; b.style.background='#333'; b.textContent=txt; b.onclick=fn; return b; };
+  head.appendChild(mk('↑',()=>{ if(idx>0){ [list[idx-1],list[idx]]=[list[idx],list[idx-1]]; renderDraft(); } }));
+  head.appendChild(mk('↓',()=>{ if(idx<list.length-1){ [list[idx+1],list[idx]]=[list[idx],list[idx+1]]; renderDraft(); } }));
+  head.appendChild(mk('✕',()=>{ list.splice(idx,1); renderDraft(); }));
+  d.appendChild(head);
+  // nested child lists for blocks
+  (BLOCK_LISTS[item.kind]||[]).forEach(L=>{ const w=document.createElement('div'); w.className='sa-child';
+    const lbl=document.createElement('div'); lbl.className='sa-childlabel'; lbl.textContent=L; w.appendChild(lbl);
+    item[L]=item[L]||[]; renderList(item[L],w); d.appendChild(w); });
+  if(item.kind==='switch_block'){ item.cases=item.cases||[];
+    item.cases.forEach((c,ci)=>{ const w=document.createElement('div'); w.className='sa-child';
+      const row=document.createElement('div'); row.className='sa-childlabel'; row.style.display='flex'; row.style.gap='8px'; row.style.alignItems='center';
+      row.appendChild(document.createTextNode('case ='));
+      const vi=document.createElement('input'); vi.value=c.value||''; vi.placeholder='value'; vi.style.flex='0 1 140px'; vi.oninput=()=>c.value=vi.value; row.appendChild(vi);
+      const rm=document.createElement('button'); rm.className='del'; rm.textContent='remove case'; rm.onclick=()=>{ item.cases.splice(ci,1); renderDraft(); }; row.appendChild(rm);
+      w.appendChild(row); c.body=c.body||[]; renderList(c.body,w); d.appendChild(w); });
+    const addc=document.createElement('button'); addc.className='ghost'; addc.textContent='+ add case'; addc.style.marginTop='4px';
+    addc.onclick=()=>{ item.cases.push({value:'',body:[]}); renderDraft(); }; d.appendChild(addc); }
+  return d; }
+function renderList(list,container){ list.forEach((_,i)=>container.appendChild(renderNode(list,i)));
+  container.appendChild(addPicker(k=>list.push(newSub(k)))); }
+function renderDraft(){ const root=document.getElementById('sa_tree'); if(!root)return; root.innerHTML=''; renderList(draftSubs,root); }
+function saJsonFromDraft(){ document.getElementById('sa_json').value=JSON.stringify(draftSubs,null,2); }
+function saJsonApply(){ try{ const v=JSON.parse(document.getElementById('sa_json').value||'[]'); if(!Array.isArray(v))throw 0; draftSubs=v; renderDraft(); }catch(e){ alert('Invalid JSON'); } }
+async function saveAction(){ const name=document.getElementById('act_name').value.trim(); if(!name)return;
+  await j('POST','/api/actions',{name,enabled:true,group:act_group.value.trim(),queue:act_queue.value.trim(),
+    concurrent:act_concurrent.checked,random:act_random.checked,always_run:act_always.checked,subactions:toWire(draftSubs)});
+  window._selAction=name;
+  const ok=document.getElementById('act_ok'); ok.textContent=''; toast('Alterações salvas');
+  document.getElementById('act_btn').textContent='Save edit';
+  await loadActions(); document.getElementById('act_editor_title').textContent='Edit: '+name; renderActionTriggers(name); }
+function editAction(x){ act_name.value=x.name; act_group.value=x.group||''; act_queue.value=x.queue||'';
+  act_concurrent.checked=!!x.concurrent; act_random.checked=!!x.random; act_always.checked=!!x.always_run;
+  draftSubs=fromWire(JSON.parse(JSON.stringify(x.subactions||[]))); renderDraft();
+  document.getElementById('act_editor_title').textContent='Edit: '+x.name;
+  document.getElementById('act_btn').textContent='Save edit'; }
+function newAction(){ window._selAction=null; act_name.value='';act_group.value='';act_queue.value='';
+  act_concurrent.checked=false;act_random.checked=false;act_always.checked=false; draftSubs=[]; renderDraft();
+  document.getElementById('act_editor_title').textContent='New action';
+  document.getElementById('act_btn').textContent='Save';
+  document.querySelectorAll('#acts .arow').forEach(r=>r.classList.remove('sel'));
+  document.getElementById('act_triggers').innerHTML='<p class="hint">Save the action first, then bind commands/events here.</p>'; }
+function selectAction(x){ window._selAction=x.name; editAction(x); renderActionTriggers(x.name);
+  document.querySelectorAll('#acts .arow').forEach(r=>r.classList.toggle('sel', r.dataset.name===x.name)); }
+async function loadActions(){ const a=await j('GET','/api/actions'); window._actions=a;
+  const box=document.getElementById('acts'); box.innerHTML='';
+  const sel=document.getElementById('cmd_action'); if(sel) sel.innerHTML='<option value="">— or run Action —</option>';
+  const esel=document.getElementById('ev_action'); if(esel) esel.innerHTML='';
+  const filt=(document.getElementById('act_filter')||{}).value||''; const fl=filt.toLowerCase();
+  const groups={};
+  a.forEach(x=>{ if(fl && !x.name.toLowerCase().includes(fl) && !(x.group||'').toLowerCase().includes(fl))return;
+    (groups[x.group||'None']=groups[x.group||'None']||[]).push(x);
+    if(sel){ const o=document.createElement('option'); o.value=x.name; o.textContent=x.name; sel.appendChild(o); }
+    if(esel){ const o=document.createElement('option'); o.value=x.name; o.textContent=x.name; esel.appendChild(o); } });
+  Object.keys(groups).sort().forEach(g=>{ const h=document.createElement('div'); h.className='agrp'; h.textContent=g+' ('+groups[g].length+')'; box.appendChild(h);
+    groups[g].forEach(x=>{ const row=document.createElement('div'); row.className='arow'+(x.enabled===false?' off':'')+(window._selAction===x.name?' sel':''); row.dataset.name=x.name;
+      const flags=[x.queue&&x.queue!=='Default'?'🧵':'',x.concurrent?'CC':'',x.random?'RND':'',x.always_run?'A':''].filter(Boolean).join('');
+      row.innerHTML=`<span class="an">${esc(x.name)}</span><span class="tag">${x.subactions.length}</span>${flags?('<span class="tag">'+flags+'</span>'):''}`;
+      row.onclick=(ev)=>{ if(ev.target.tagName==='BUTTON')return; selectAction(x); };
+      const run=document.createElement('button'); run.className='run'; run.textContent='▶'; run.title='Run'; run.onclick=(ev)=>{ev.stopPropagation();fetch('/api/run/'+encodeURIComponent(x.name),{method:'POST'});};
+      const del=document.createElement('button'); del.className='del'; del.textContent='x'; del.onclick=async(ev)=>{ev.stopPropagation(); if(!confirm('Delete '+x.name+'?'))return; await fetch('/api/actions/'+encodeURIComponent(x.name),{method:'DELETE'}); if(window._selAction===x.name)newAction(); loadActions();};
+      row.appendChild(run); row.appendChild(del); box.appendChild(row); }); }); }
+async function renderActionTriggers(name){ const box=document.getElementById('act_triggers'); box.innerHTML='';
+  const [trigs,cmds]=await Promise.all([j('GET','/api/triggers'),j('GET','/api/commands')]);
+  const myCmds=cmds.filter(c=>(c.action||'').toLowerCase()===name.toLowerCase());
+  const myTrigs=trigs.filter(t=>(t.action||'').toLowerCase()===name.toLowerCase());
+  const ul=document.createElement('div');
+  myCmds.forEach(c=>{ const d=document.createElement('div'); d.className='arow'; d.innerHTML=`<span class="tag">command</span> <code style="flex:1">${esc(c.trigger)}</code>`;
+    const x=document.createElement('button'); x.className='del'; x.textContent='x'; x.onclick=async()=>{await fetch('/api/commands/'+encodeURIComponent(c.trigger),{method:'DELETE'});renderActionTriggers(name);loadCmds();}; d.appendChild(x); ul.appendChild(d); });
+  myTrigs.forEach(t=>{ const d=document.createElement('div'); d.className='arow'; d.innerHTML=`<span class="tag">event</span> <b style="flex:1">${esc(t.event)}</b>`;
+    const x=document.createElement('button'); x.className='del'; x.textContent='x'; x.onclick=async()=>{await fetch('/api/triggers/'+encodeURIComponent(t.event),{method:'DELETE'});renderActionTriggers(name);loadTriggers();}; d.appendChild(x); ul.appendChild(d); });
+  if(!myCmds.length && !myTrigs.length){ const p=document.createElement('p'); p.className='hint'; p.textContent='No triggers yet.'; ul.appendChild(p); }
+  box.appendChild(ul);
+  const r1=document.createElement('div'); r1.className='row'; r1.style.marginTop='8px';
+  const ci=document.createElement('input'); ci.placeholder='!command'; ci.style.flex='1 1 120px';
+  const cb=document.createElement('button'); cb.className='go'; cb.textContent='Bind command';
+  cb.onclick=async()=>{ const t=ci.value.trim(); if(!t)return; await j('POST','/api/commands',{trigger:t,action:name,enabled:true,global_cooldown:0,user_cooldown:0,grant_type:'',groups:[],users:[]}); ci.value=''; renderActionTriggers(name); loadCmds(); };
+  r1.appendChild(ci); r1.appendChild(cb); box.appendChild(r1);
+  const r2=document.createElement('div'); r2.className='row'; r2.style.marginTop='6px';
+  const ei=document.createElement('input'); ei.placeholder='event (sub, raid, follow, reward title…)'; ei.style.flex='1 1 120px';
+  const eb=document.createElement('button'); eb.className='go'; eb.textContent='Bind event';
+  eb.onclick=async()=>{ const ev=ei.value.trim(); if(!ev)return; await j('POST','/api/triggers',{event:ev,action:name}); ei.value=''; renderActionTriggers(name); loadTriggers&&loadTriggers(); };
+  r2.appendChild(ei); r2.appendChild(eb); box.appendChild(r2); }
+async function loadTriggers(){ const t=await j('GET','/api/triggers'); const ul=document.getElementById('triggers'); ul.innerHTML='';
+  if(!window._rwLinks){ window._rwLinks=await j('GET','/api/reward-links').catch(()=>[]); }
+  const lbl=ev=>{ const l=(window._rwLinks||[]).find(x=>x.key===ev);
+    if(l) return (l.title||ev)+' ['+l.entries.map(e=>e.platform).join('+')+'] (reward)';
+    const m=ev.match(/^(twitch|kick):(.+)$/); return m?(m[2]+' ['+m[1]+'] (reward)'):ev; };
+  t.forEach(x=>{ const li=document.createElement('li'); li.innerHTML=`<span class="tag">${esc(lbl(x.event))}</span> → <b style="flex:1">${esc(x.action)}</b>`;
+    const e=document.createElement('button'); e.className='run'; e.textContent='edit'; e.onclick=()=>editTrigger(x); li.appendChild(e);
+    const b=document.createElement('button'); b.className='del'; b.textContent='x'; b.onclick=async()=>{await fetch('/api/triggers/'+encodeURIComponent(x.event),{method:'DELETE'});loadTriggers();}; li.appendChild(b); ul.appendChild(li); }); }
+function editTrigger(x){ const sel=document.getElementById('ev_event');
+  if(![...sel.options].some(o=>o.value===x.event)){ const o=document.createElement('option'); o.value=x.event; o.textContent=x.event; sel.appendChild(o); }
+  sel.value=x.event; const asel=document.getElementById('ev_action'); asel.value=x.action;
+  window._editTrig=x.event; document.getElementById('ev_btn').textContent='Save edit'; document.getElementById('ev_cancel').style.display='';
+  sel.scrollIntoView({block:'center'}); }
+function cancelTrigger(){ window._editTrig=null; document.getElementById('ev_btn').textContent='Bind'; document.getElementById('ev_cancel').style.display='none'; }
+async function addTrigger(){ const event=ev_event.value, action=ev_action.value; if(!action)return;
+  const ed=window._editTrig;
+  await j('POST','/api/triggers',{event,action});
+  if(ed && ed!==event){ await fetch('/api/triggers/'+encodeURIComponent(ed),{method:'DELETE'}); }
+  toast(ed?'Alterações salvas':'Evento vinculado'); cancelTrigger(); loadTriggers(); }
+async function exportAll(){ const r=await j('POST','/api/export',{}); const ok=document.getElementById('exp_ok');
+  if(r.ok){ document.getElementById('share_code').value=r.code; ok.textContent='exported ✓ (copy the code)'; } else ok.textContent='error';
+  setTimeout(()=>ok.textContent='',2500); }
+async function importCode(){ const code=document.getElementById('share_code').value.trim(); if(!code)return;
+  const r=await j('POST','/api/import_code',{code}); const ok=document.getElementById('exp_ok');
+  ok.textContent=r.ok?`imported: ${r.actions} actions, ${r.commands} cmds, ${r.triggers} triggers, ${r.timers} timers`:('error: '+r.error);
+  setTimeout(()=>ok.textContent='',4000); loadActions(); loadCmds(); loadTriggers(); loadTimers&&loadTimers(); }
+async function importSb(){ const r=await j('POST','/api/import'); const ok=document.getElementById('imp_ok');
+  ok.textContent = r.ok ? `imported: ${r.actions} actions, ${r.commands} commands (${r.skipped_subactions} subactions skipped)` : ('error: '+r.error);
+  loadActions(); loadCmds(); }
+
+// commands
+async function loadCmds(){ const c=await j('GET','/api/commands'); const ul=document.getElementById('cmds'); ul.innerHTML='';
+  c.forEach(x=>{ const li=document.createElement('li'); const tgt=x.action?`<span class="tag">action: ${esc(x.action)}</span>`:esc(x.response);
+    const cd=[(x.global_cooldown?('gcd '+x.global_cooldown+'s'):''),(x.user_cooldown?('ucd '+x.user_cooldown+'s'):''),
+      (x.grant_type?((x.grant_type)+': '+((x.groups||[]).concat(x.users||[]).join(','))):'')].filter(Boolean).map(f=>`<span class="tag">${esc(f)}</span>`).join(' ');
+    li.innerHTML=`<code>${esc(x.trigger)}</code> → <span style="flex:1">${tgt} ${cd}</span>`;
+    const e=document.createElement('button'); e.className='run'; e.textContent='edit'; e.onclick=()=>editCmd(x); li.appendChild(e);
+    const b=document.createElement('button'); b.className='del'; b.textContent='x'; b.onclick=async()=>{await fetch('/api/commands/'+encodeURIComponent(x.trigger),{method:'DELETE'});loadCmds();}; li.appendChild(b); ul.appendChild(li); }); }
+function editCmd(x){ cmd_trigger.value=x.trigger; cmd_response.value=x.response||''; cmd_action.value=x.action||'';
+  cmd_gcd.value=x.global_cooldown||0; cmd_ucd.value=x.user_cooldown||0; cmd_grant.value=x.grant_type||'';
+  cmd_groups.value=(x.groups||[]).join(','); cmd_mode.value=x.mode||''; cmd_location.value=x.location||'';
+  cmd_case.checked=!!x.case_sensitive; cmd_aliases.value=(x.aliases||[]).join(',');
+  const pf=x.platforms||[]; cmd_pf_tw.checked=!pf.length||pf.includes('twitch'); cmd_pf_kc.checked=!pf.length||pf.includes('kick'); cmd_pf_yt.checked=!pf.length||pf.includes('youtube');
+  window._editCmd=x.trigger; document.getElementById('cmd_btn').textContent='Save'; document.getElementById('cmd_cancel').style.display='';
+  show('commands'); cmd_trigger.scrollIntoView({block:'center'}); }
+function cancelCmd(){ window._editCmd=null; document.getElementById('cmd_btn').textContent='Add'; document.getElementById('cmd_cancel').style.display='none';
+  cmd_trigger.value='';cmd_response.value='';cmd_action.value='';cmd_gcd.value='0';cmd_ucd.value='0';cmd_grant.value='';cmd_groups.value='';cmd_aliases.value='';cmd_mode.value='';cmd_location.value='';cmd_case.checked=false; }
+async function addCmd(){ const trigger=cmd_trigger.value.trim(); if(!trigger)return;
+  const action=cmd_action.value||null;
+  const groups=cmd_groups.value.split(',').map(s=>s.trim()).filter(Boolean);
+  const aliases=cmd_aliases.value.split(',').map(s=>s.trim()).filter(Boolean);
+  const platforms=[]; if(cmd_pf_tw.checked)platforms.push('twitch'); if(cmd_pf_kc.checked)platforms.push('kick'); if(cmd_pf_yt.checked)platforms.push('youtube');
+  const ed=window._editCmd;
+  const r=await j('POST','/api/commands',{trigger,response:cmd_response.value,action,enabled:true,
+    global_cooldown:parseInt(cmd_gcd.value||'0',10),user_cooldown:parseInt(cmd_ucd.value||'0',10),
+    grant_type:cmd_grant.value,groups,users:[],mode:cmd_mode.value,location:cmd_location.value,
+    case_sensitive:cmd_case.checked,aliases,platforms:(platforms.length===3?[]:platforms)});
+  if(r&&r.ok===false){ toast('Erro: '+(r.error||'falha'),true); return; }
+  // Renamed while editing: the trigger is the key, so drop the old one.
+  if(ed && ed!==trigger){ await fetch('/api/commands/'+encodeURIComponent(ed),{method:'DELETE'}); }
+  toast(ed?'Alterações salvas':'Comando adicionado'); cancelCmd(); loadCmds(); }
+
+// timers / vars
+async function loadTimers(){ const t=await j('GET','/api/timers'); const ul=document.getElementById('timers'); ul.innerHTML='';
+  t.forEach(x=>{ const li=document.createElement('li');
+    const plats=(x.platforms&&x.platforms.length)?x.platforms:['twitch'];
+    const acct=x.account==='broadcaster'?'broadcaster':'bot';
+    li.innerHTML=`<b>${esc(x.name)}</b> <code>${x.interval_secs}s</code> <code>${plats.map(esc).join('+')} · ${acct}</code> <span style="flex:1">${esc(x.text)}</span>`;
+    const b=document.createElement('button'); b.className='del'; b.textContent='x'; b.onclick=async()=>{await fetch('/api/timers/'+encodeURIComponent(x.name),{method:'DELETE'});loadTimers();}; li.appendChild(b); ul.appendChild(li); }); }
+async function addTimer(){ const name=tm_name.value.trim(); const interval_secs=parseInt(tm_interval.value||'0',10); if(!name||!interval_secs)return;
+  const platforms=[]; if(tm_p_twitch.checked)platforms.push('twitch'); if(tm_p_kick.checked)platforms.push('kick'); if(tm_p_youtube.checked)platforms.push('youtube');
+  if(!platforms.length){ toast('escolha ao menos um chat',true); return; }
+  await j('POST','/api/timers',{name,interval_secs,text:tm_text.value,platforms,account:tm_account.value});
+  tm_name.value='';tm_interval.value='';tm_text.value=''; loadTimers(); }
+async function loadVars(){ const v=await j('GET','/api/variables'); const ul=document.getElementById('vars'); ul.innerHTML='';
+  Object.entries(v).forEach(([k,val])=>{ const li=document.createElement('li'); li.innerHTML=`<code>${esc(k)}</code> = <span style="flex:1">${esc(val)}</span>`;
+    const b=document.createElement('button'); b.className='del'; b.textContent='x'; b.onclick=async()=>{await fetch('/api/variables/'+encodeURIComponent(k),{method:'DELETE'});loadVars();}; li.appendChild(b); ul.appendChild(li); }); }
+async function setVar(){ const name=var_name.value.trim(); if(!name)return; await j('POST','/api/variables',{name,value:var_value.value}); var_name.value='';var_value.value=''; loadVars(); }
+
+// settings (accounts + integrations)
+window._openCards = window._openCards || {};
+const ROLE_LABEL = { broadcaster:'Main account', bot:'Bot account' };
+function toggleCard(key){ window._openCards[key]=!window._openCards[key];
+  const el=document.getElementById('card_'+key); if(el) el.classList.toggle('open', !!window._openCards[key]); }
+function renderAccounts(s){
+  const tw=s.twitch||{}, kc=s.kick||{}, yt=s.youtube||{};
+  renderCards('tw', tw, ['broadcaster','bot']);
+  renderCards('kc', kc, ['broadcaster','bot']);
+  renderCards('yt', yt, ['broadcaster','bot']);
+}
+function renderCards(pfx, plat, roles){
+  const wrap=document.getElementById(pfx+'_cards'); if(!wrap) return;
+  wrap.innerHTML='';
+  roles.forEach(role=>{
+    const a=plat[role]||{}; const on=!!a.access_token; const key=pfx+'_'+role;
+    const open=!!window._openCards[key];
+    const name=on?esc(a.display_name||a.user_login||'connected'):'Not connected';
+    const avatar=(on&&a.avatar_url)?`<img class="acct-avatar" src="${esc(a.avatar_url)}" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'acct-avatar',textContent:'👤'}))">`
+      :`<div class="acct-avatar">👤</div>`;
+    const card=document.createElement('div');
+    card.className='acct'+(on?' on':'')+(open?' open':''); card.id='card_'+key;
+    card.innerHTML=`
+      <div class="acct-head" onclick="toggleCard('${key}')">
+        ${avatar}
+        <div class="acct-meta"><div class="acct-role">${ROLE_LABEL[role]}</div><div class="acct-name${on?'':' off'}">${name}</div></div>
+        <span class="acct-badge">${on?'connected':'log in'}</span>
+        <span class="acct-chev">▾</span>
+      </div>
+      <div class="acct-body" id="body_${key}"></div>`;
+    wrap.appendChild(card);
+    const body=card.querySelector('#body_'+key);
+    const logoutFn = pfx==='tw'?'twitchLogout':(pfx==='kc'?'kickLogout':'youtubeLogout');
+    const loginFn = pfx==='tw'?'twitchLogin':(pfx==='kc'?'kickLogin':'youtubeLogin');
+    if(on){
+      body.innerHTML=`<p class="hint" style="margin-top:12px">Logged in as <b>${esc(a.display_name||a.user_login)}</b>${a.user_login?' (@'+esc(a.user_login)+')':''}.</p>
+        <button class="go" style="background:#444" onclick="${logoutFn}('${role}')">Logout</button>`;
+    } else {
+      const extra = pfx==='tw'
+        ? `<p class="hint">Device Code Flow — no secret. Click Login, open the link and type the code.</p>`
+        : (pfx==='kc'
+          ? `<p class="hint">Opens Kick in a new tab to authorize. Redirect URI must be registered: <code>${location.origin}/auth/kick/callback</code></p>`
+          : `<p class="hint">Abre o Google numa nova aba pra autorizar. Registre a redirect URI: <code>${location.origin}/auth/youtube/callback</code></p>`);
+      body.innerHTML=`${extra}<button class="go" onclick="${loginFn}('${role}')">Login</button><div class="hint" id="steps_${key}"></div>`;
+    }
+  });
+}
+async function loadSettings(){ const s=await j('GET','/api/settings'); const tw=s.twitch||{},kc=s.kick||{},yt=s.youtube||{},o=s.obs||{},vt=s.vts||{},th=s.throwing||{};
+  tw_client_id.value=tw.client_id||'';tw_client_secret.value=tw.client_secret||'';tw_channel.value=tw.channel||'';
+  kc_client_id.value=kc.client_id||'';kc_client_secret.value=kc.client_secret||'';kc_channel.value=kc.channel||'';kc_ws_token.value=kc.ws_client_token||'';
+  yt_client_id.value=yt.client_id||'';yt_client_secret.value=yt.client_secret||'';yt_video_id.value=yt.video_id||'';
+  { const kr=document.getElementById('kc_redir'); if(kr) kr.textContent=location.origin+'/auth/kick/callback'; }
+  { const yr=document.getElementById('yt_redir'); if(yr) yr.textContent=location.origin+'/auth/youtube/callback'; }
+  renderAccounts(s);
+  obs_enabled.checked=!!o.enabled;obs_address.value=o.address||'127.0.0.1';obs_port.value=o.port||4455;obs_password.value=o.password||'';
+  vts_enabled.checked=!!vt.enabled;vts_address.value=vt.address||'127.0.0.1';vts_port.value=vt.port||8001;
+  throwing_enabled.checked=!!th.enabled;throwing_address.value=th.address||'127.0.0.1';throwing_port.value=th.port||42069;
+  window._vtsToken=vt.token||''; window._discordWebhooks=s.discord_webhooks||[]; renderDiscord();
+  window._discordEnabled=s.discord_enabled!==false;
+  const ds=document.getElementById('discord_switch'); if(ds)ds.checked=window._discordEnabled;
+  const dc=document.getElementById('card_int_discord'); if(dc)dc.classList.toggle('off',!window._discordEnabled);
+  const a=s.apis||{};
+  lp_client_id.value=a.livepix_client_id||''; lp_client_secret.value=a.livepix_client_secret||'';
+  sl_client_id.value=a.streamlabs_client_id||''; sl_client_secret.value=a.streamlabs_client_secret||''; sl_socket_token.value=a.streamlabs_socket_token||'';
+  se_jwt.value=a.streamelements_jwt||''; se_account_id.value=a.streamelements_account_id||''; }
+function renderDiscord(){ const ul=document.getElementById('discord_list'); if(!ul)return; ul.innerHTML='';
+  (window._discordWebhooks||[]).forEach((w,i)=>{ const li=document.createElement('li');
+    li.innerHTML=`<b style="flex:0 0 120px">${esc(w.name)}</b> <span style="flex:1;color:#9aa0a6;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(w.url)}</span>`;
+    const x=document.createElement('button'); x.className='del'; x.textContent='x'; x.onclick=()=>{ window._discordWebhooks.splice(i,1); renderDiscord(); }; li.appendChild(x); ul.appendChild(li); }); }
+function addDiscord(){ const name=dw_name.value.trim(), url=dw_url.value.trim(); if(!name||!url)return;
+  window._discordWebhooks=window._discordWebhooks||[]; window._discordWebhooks=window._discordWebhooks.filter(w=>w.name.toLowerCase()!==name.toLowerCase());
+  window._discordWebhooks.push({name,url}); dw_name.value='';dw_url.value=''; renderDiscord(); }
+async function saveSettings(){
+  const body={twitch:{client_id:tw_client_id.value,client_secret:tw_client_secret.value,channel:tw_channel.value},
+    kick:{client_id:kc_client_id.value,client_secret:kc_client_secret.value,channel:kc_channel.value,ws_client_token:kc_ws_token.value},
+    youtube:{client_id:yt_client_id.value,client_secret:yt_client_secret.value,video_id:yt_video_id.value},
+    obs:{enabled:obs_enabled.checked,address:obs_address.value,port:parseInt(obs_port.value||'4455',10),password:obs_password.value},
+    vts:{enabled:vts_enabled.checked,address:vts_address.value,port:parseInt(vts_port.value||'8001',10),token:window._vtsToken||''},
+    throwing:{enabled:throwing_enabled.checked,address:throwing_address.value,port:parseInt(throwing_port.value||'42069',10)},
+    discord_webhooks:window._discordWebhooks||[], discord_enabled:window._discordEnabled!==false,
+    apis:{livepix_client_id:lp_client_id.value,livepix_client_secret:lp_client_secret.value,
+      streamlabs_client_id:sl_client_id.value,streamlabs_client_secret:sl_client_secret.value,streamlabs_socket_token:sl_socket_token.value,
+      streamelements_jwt:se_jwt.value,streamelements_account_id:se_account_id.value}};
+  await j('PUT','/api/settings',body);
+  toast('Alterações salvas'); }
+
+function pollLogin(pfx, platKey, role){ // collapse card + reload once the token lands
+  const key=pfx+'_'+role; let n=0;
+  const t=setInterval(async()=>{ const s=await j('GET','/api/settings');
+    const a=(s[platKey]||{})[role];
+    if(a&&a.access_token){ clearInterval(t); window._openCards[key]=false; loadSettings(); }
+    if(++n>80){ clearInterval(t); } },3000);
+}
+async function twitchLogin(role){ await saveSettings();
+  const r=await j('POST','/api/auth/twitch/start?role='+role);
+  const d=document.getElementById('steps_tw_'+role);
+  if(!r.ok){ if(d) d.textContent='Error: '+r.error; return; }
+  if(d) d.innerHTML='Open <a target="_blank" href="'+r.verification_uri+'">'+r.verification_uri+'</a> and enter code: <b style="font-size:1.3em">'+r.user_code+'</b>';
+  pollLogin('tw','twitch',role); }
+async function twitchLogout(role){ await j('POST','/api/auth/twitch/logout?role='+role); loadSettings(); }
+async function kickLogin(role){ await saveSettings();
+  const r=await j('POST','/api/auth/kick/start?role='+role+'&base='+encodeURIComponent(location.origin));
+  const d=document.getElementById('steps_kc_'+role);
+  if(!r.ok){ if(d) d.textContent='Error: '+r.error; return; }
+  window.open(r.authorize_url,'_blank');
+  if(d) d.innerHTML='Authorizing in the new tab… this updates automatically.';
+  pollLogin('kc','kick',role); }
+async function kickLogout(role){ await j('POST','/api/auth/kick/logout?role='+role); loadSettings(); }
+async function youtubeLogin(role){ await saveSettings();
+  const r=await j('POST','/api/auth/youtube/start?role='+role+'&base='+encodeURIComponent(location.origin));
+  const d=document.getElementById('steps_yt_'+role);
+  if(!r.ok){ if(d) d.textContent='Error: '+r.error; return; }
+  window.open(r.authorize_url,'_blank');
+  if(d) d.innerHTML='Authorizing in the new tab… this updates automatically.';
+  pollLogin('yt','youtube',role); }
+async function youtubeLogout(role){ await j('POST','/api/auth/youtube/logout?role='+role); loadSettings(); }
+
+// rewards — grouped by stored link (reward ids), so renames keep them linked
+async function loadRewards(){ const [r,links]=await Promise.all([j('GET','/api/rewards'),j('GET','/api/reward-links')]);
+  window._rwLinks=links||[]; window._rwAll=r.rewards||[]; window._rwSel=window._rwSel||new Set(); window._rwRows={};
+  const errBox=document.getElementById('rw_errors'); errBox.textContent=(r.errors&&r.errors.length)?('⚠ '+r.errors.join('  ·  ')):'';
+  const ul=document.getElementById('rewards'); ul.innerHTML='';
+  const byId={}; (r.rewards||[]).forEach(rw=>byId[rw.platform+'|'+rw.id]=rw);
+  const used=new Set();
+  (links||[]).forEach(l=>{ const live=l.entries.map(e=>{used.add(e.platform+'|'+e.id); return byId[e.platform+'|'+e.id];}).filter(Boolean);
+    if(!live.length) return; // every reward of this link was deleted on the platform
+    const f=live[0];
+    renderRewardRow(ul,{key:l.key,title:f.title||l.title,cost:f.cost,color:f.color,enabled:f.enabled,
+      entries:live.map(x=>({platform:x.platform,id:x.id,description:x.description||''}))}); });
+  (r.rewards||[]).forEach(rw=>{ if(used.has(rw.platform+'|'+rw.id))return;
+    renderRewardRow(ul,{key:null,title:rw.title,cost:rw.cost,color:rw.color,enabled:rw.enabled,
+      entries:[{platform:rw.platform,id:rw.id,description:rw.description||''}]}); }); }
+function renderRewardRow(ul,g){ const li=document.createElement('li');
+  const sw=g.color?`<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${esc(g.color)};margin-right:6px"></span>`:'';
+  const tags=g.entries.map(e=>`<span class="tag">${esc(e.platform)}</span>`).join(' ');
+  const lk=g.key&&g.entries.length>1?' <span class="tag" style="color:#8ab4f8">linked</span>':'';
+  li.innerHTML=`${tags}${lk} ${sw}<b>${esc(g.title)}</b> <span style="color:#9aa0a6">${g.cost} pts</span><span style="flex:1"></span>`;
+  const rid=g.entries.map(e=>e.platform+'|'+e.id).join(','); window._rwRows[rid]=g.entries;
+  const tgl=document.createElement('label'); tgl.className='chk'; tgl.style.margin='0 10px 0 0'; tgl.title='Ativar/desativar no(s) canal(is)';
+  const ti=document.createElement('input'); ti.type='checkbox'; ti.checked=!!g.enabled;
+  ti.onchange=async()=>{ const op=ti.checked?'enable':'disable'; ti.disabled=true;
+    for(const e of g.entries){ await j('POST','/api/rewards/'+e.platform+'/'+encodeURIComponent(e.id)+'/'+op); }
+    ti.disabled=false; toast(ti.checked?'Reward ativado':'Reward desativado'); loadRewards(); };
+  tgl.appendChild(ti); li.appendChild(tgl);
+  const ed=document.createElement('button'); ed.className='run'; ed.textContent='edit'; ed.onclick=()=>editReward(g); li.appendChild(ed);
+  const bind=document.createElement('button'); bind.className='run'; bind.textContent='Bind to action'; bind.onclick=()=>bindReward(g.key?g.key:(g.entries[0].platform+':'+g.title),g.title,g.entries); li.appendChild(bind);
+  const del=document.createElement('button'); del.className='del'; del.textContent='delete'; del.onclick=async()=>{ if(!confirm('Delete reward '+g.title+' ('+g.entries.map(e=>e.platform).join('+')+')?'))return; for(const e of g.entries){ await j('DELETE','/api/rewards/'+e.platform+'/'+encodeURIComponent(e.id)); } loadRewards(); }; li.appendChild(del);
+  const sel=document.createElement('input'); sel.type='checkbox'; sel.title='Selecionar p/ ação em massa'; sel.style.cssText='margin-left:12px;width:18px;height:18px;cursor:pointer'; sel.checked=window._rwSel.has(rid);
+  sel.onchange=()=>{ if(sel.checked)window._rwSel.add(rid); else window._rwSel.delete(rid); }; li.appendChild(sel);
+  ul.appendChild(li); }
+async function bulkReward(op){ const ids=[...(window._rwSel||[])]; if(!ids.length){ toast('Nenhum reward selecionado',true); return; }
+  for(const id of ids){ for(const e of (window._rwRows[id]||[])){ await j('POST','/api/rewards/'+e.platform+'/'+encodeURIComponent(e.id)+'/'+op); } }
+  toast((op==='enable'?'Ativados: ':'Desativados: ')+ids.length+' reward(s)'); window._rwSel.clear(); loadRewards(); }
+function editReward(g){ window._editReward={entries:g.entries}; rw_platform.value=g.entries.length>1?'both':g.entries[0].platform; rw_title.value=g.title;
+  rw_cost.value=g.cost; rw_desc.value=g.entries[0].description||''; if(g.color)rw_color.value=g.color; rw_input.checked=false;
+  rw_platform.disabled=true;
+  document.getElementById('rw_btn').textContent='Save';
+  document.getElementById('rw_cancel').style.display='';
+  document.getElementById('rw_ok').textContent='editando "'+g.title+'"';
+  rw_title.scrollIntoView({block:'center'}); }
+function cancelReward(){ window._editReward=null; rw_platform.disabled=false;
+  document.getElementById('rw_btn').textContent='Create'; document.getElementById('rw_cancel').style.display='none';
+  rw_title.value=''; rw_desc.value=''; document.getElementById('rw_ok').textContent=''; }
+async function createReward(){ const body={ platform:rw_platform.value, title:rw_title.value.trim(), cost:parseInt(rw_cost.value||'1',10),
+    description:rw_desc.value.trim(), color:rw_color.value, user_input_required:rw_input.checked };
+  if(!body.title){ return; }
+  const ok=document.getElementById('rw_ok'); const ed=window._editReward; let errs=[];
+  if(ed && ed.entries){ for(const e of ed.entries){ const r=await j('PATCH','/api/rewards/'+e.platform+'/'+encodeURIComponent(e.id),{...body,platform:e.platform}); if(!r.ok)errs.push(e.platform+': '+r.error); } }
+  else { const r=await j('POST','/api/rewards',body); if(!r.ok)errs.push(r.error); else if(r.warn)errs.push('aviso: '+r.warn); }
+  if(errs.length){ ok.textContent=errs.join(' | '); toast((ed?'Erro ao salvar: ':'Erro: ')+errs.join(' | '),true); if(!ed)loadRewards(); }
+  else { ok.textContent=''; toast(ed?'Alterações salvas':'Reward criado'); cancelReward(); loadRewards(); }
+  setTimeout(()=>{ if(!window._editReward) ok.textContent=''; },2500); }
+function bindReward(ev,label,entries){ const sel=document.getElementById('ev_event');
+  const plats=entries&&entries.length?' ['+entries.map(e=>e.platform).join('+')+']':'';
+  const txt=(label||ev)+plats+' (reward)';
+  const ex=[...sel.options].find(o=>o.value===ev);
+  if(ex){ ex.textContent=txt; } else { const o=document.createElement('option'); o.value=ev; o.textContent=txt; sel.appendChild(o); }
+  sel.value=ev; show('events'); }
+
+// feed ws
+function connectWs(){ const proto=location.protocol==='https:'?'wss':'ws'; const ws=new WebSocket(proto+'://'+location.host+'/ws');
+  const feed=document.getElementById('feed'),dot=document.getElementById('dot'),conn=document.getElementById('conn');
+  ws.onopen=()=>{dot.classList.add('on');conn.textContent='connected';}; ws.onclose=()=>{dot.classList.remove('on');conn.textContent='reconnecting…';setTimeout(connectWs,2000);};
+  ws.onmessage=(e)=>{ const ev=JSON.parse(e.data);
+    if(ev.type==='chat_msg'){ dockRender(ev.msg); return; }
+    if(ev.type==='chat_delete'){ dockDelete(ev.id); return; }
+    if(ev.type==='chat_clear'){ dockClear(); return; }
+    const d=document.createElement('div');
+    if(ev.type==='chat') d.innerHTML=`<span class="u">${esc(ev.user)}</span>: ${esc(ev.text)}`;
+    else if(ev.type==='notice') d.innerHTML=`<span class="tag">${esc(ev.kind)}</span> <span class="u">${esc(ev.user)}</span> ${esc(ev.text)}`;
+    else d.innerHTML=`<span class="sys">${esc(ev.text)}</span>`;
+    feed.appendChild(d); feed.scrollTop=feed.scrollHeight; while(feed.childNodes.length>400) feed.removeChild(feed.firstChild); }; }
+
+// --- chat dock (live feed + send/ban/delete) ---
+const _COLOR_RE=/^(#[0-9a-fA-F]{6}|hsl\(\d{1,3}, \d{1,3}%, \d{1,3}%\))$/;
+function dockRender(m){ const log=document.getElementById('dock_log'); if(!log||!m)return;
+  const near=log.scrollTop+log.clientHeight>=log.scrollHeight-40;
+  const row=document.createElement('div'); row.dataset.id=m.id||''; row.style.cssText='padding:2px 0;line-height:1.6';
+  const plat=document.createElement('small'); plat.style.opacity=.5; plat.textContent='['+(m.platform||'')+'] '; row.appendChild(plat);
+  (m.badges||[]).forEach(b=>{ if(/^https:/.test(b)||/^\/badges\/kick\/[a-z_]+\.svg$/.test(b)){ const i=document.createElement('img'); i.src=b; i.style.cssText='height:18px;vertical-align:-3px;margin-right:2px'; row.appendChild(i); } });
+  const name=document.createElement('span'); name.textContent=m.from||''; name.style.cssText='font-weight:600';
+  if(_COLOR_RE.test(m.color||''))name.style.color=m.color;
+  if(m.platform==='twitch'||m.platform==='kick'){ name.style.cursor='pointer'; name.onclick=(e)=>dockMenu(e,m); }
+  row.appendChild(name); row.appendChild(document.createTextNode(': '));
+  (m.parts||[]).forEach(p=>{ if(p.type==='text')row.appendChild(document.createTextNode(p.text));
+    else if(p.type==='emote'&&/^https:/.test(p.url)){ const i=document.createElement('img'); i.src=p.url; i.style.cssText='height:22px;vertical-align:-5px'; row.appendChild(i); } });
+  log.appendChild(row); if(near)log.scrollTop=log.scrollHeight; while(log.childNodes.length>300)log.removeChild(log.firstChild); }
+function dockDelete(id){ const log=document.getElementById('dock_log'); if(!log)return;
+  log.querySelectorAll('[data-id]').forEach(r=>{ if(r.dataset.id===id)r.style.opacity=.35; }); }
+function dockClear(){ const log=document.getElementById('dock_log'); if(log)log.innerHTML=''; }
+function dockMenu(e,m){ e.stopPropagation(); const menu=document.getElementById('dock_menu'); if(!menu)return;
+  const mid=(m.id||'').split(':').slice(1).join(':'); menu.innerHTML='';
+  const head=document.createElement('div'); head.style.cssText='padding:4px 12px;opacity:.6;font-size:12px'; head.textContent=(m.from||'')+' ('+m.platform+')'; menu.appendChild(head);
+  const add=(label,fn)=>{ const d=document.createElement('div'); d.textContent=label; d.style.cssText='padding:7px 14px;cursor:pointer'; d.onmouseenter=()=>d.style.background='#222'; d.onmouseleave=()=>d.style.background=''; d.onclick=fn; menu.appendChild(d); };
+  const target=m.login||m.from;
+  add('Banir', ()=>{ if(confirm('Banir '+target+' permanentemente?'))dockAct({platform:m.platform,login:target,duration:0}); });
+  [5,10,30,60].forEach(min=>add('Timeout '+min+' min', ()=>dockAct({platform:m.platform,login:target,duration:min})));
+  if(mid)add('Deletar mensagem', ()=>dockDel(m.platform,mid));
+  menu.style.left=Math.min(e.clientX,innerWidth-170)+'px'; menu.style.top=Math.min(e.clientY,innerHeight-240)+'px'; menu.style.display='block'; }
+async function dockAct(body){ document.getElementById('dock_menu').style.display='none';
+  try{ const r=await j('POST','/api/chat/ban',body); toast(r.ok?'ok':('erro: '+(r.error||''))); }catch(_){ toast('erro'); } }
+async function dockDel(platform,id){ document.getElementById('dock_menu').style.display='none';
+  try{ const r=await j('POST','/api/chat/delete',{platform,id}); toast(r.ok?'deletado':('erro: '+(r.error||''))); }catch(_){ toast('erro'); } }
+async function dockSend(){ const t=document.getElementById('dock_text'); const text=t.value.trim(); if(!text)return;
+  const targets=[]; if(document.getElementById('dock_tw').checked)targets.push('twitch'); if(document.getElementById('dock_kick').checked)targets.push('kick');
+  if(!targets.length){ toast('selecione uma plataforma'); return; }
+  try{ await j('POST','/api/chat/send',{text,targets}); t.value=''; }catch(_){ toast('erro ao enviar'); } }
+document.addEventListener('click',()=>{ const m=document.getElementById('dock_menu'); if(m)m.style.display='none'; });
+function toggleStat(e){ if(e)e.stopPropagation(); const l=document.getElementById('statlist'); l.hidden=!l.hidden; if(!l.hidden)loadStatus(); }
+async function loadStatus(){ let d; try{ d=await j('GET','/api/status'); }catch(_){ return; }
+  const sdot=document.getElementById('sdot'), lbl=document.getElementById('statlbl'), list=document.getElementById('statlist');
+  lbl.textContent=d.up+'/'+d.total;
+  sdot.className='sdot '+(d.total===0?'grey':d.up===d.total?'green':d.up===0?'red':'yellow');
+  list.innerHTML=d.items.map(i=>`<div class="srow"><span class="sdot ${i.connected?'green':'red'}"></span>${esc(i.name)}</div>`).join('')||'<div class="srow" style="color:#9aa0a6">nada configurado</div>'; }
+document.addEventListener('click',e=>{ const w=document.getElementById('statw'); if(w&&!w.contains(e.target)){ const l=document.getElementById('statlist'); if(l)l.hidden=true; } });
+async function intOp(key,op){ try{ await j('POST','/api/integrations/'+key+'/'+op); }catch(_){ } loadIntegrations(); loadStatus(); }
+async function intToggle(key,on){ try{ await j('POST','/api/integrations/'+key+'/'+(on?'auto_on':'auto_off')); await j('POST','/api/integrations/'+key+'/'+(on?'on':'off')); }catch(_){ } loadIntegrations(); loadStatus(); }
+function discordToggle(on){ window._discordEnabled=on; const c=document.getElementById('card_int_discord'); if(c)c.classList.toggle('off',!on); saveSettings(); }
+// --- generic drop-in plugins (from plugins/) ---
+// Editor uses a synthetic kind "plugin:<name>:<action>" with flat fields; the wire
+// format is {kind:'plugin',plugin,action,params:{...}}. Convert at save/load.
+function _mapKids(s,fn){ ['then','else','body','default'].forEach(k=>{ if(Array.isArray(s[k]))s[k]=s[k].map(fn); });
+  if(Array.isArray(s.cases))s.cases=s.cases.map(c=>({...c,body:(c.body||[]).map(fn)})); return s; }
+function toWire(list){ return (list||[]).map(function w(s){ s={..._mapKids({...s},w)};
+  if(typeof s.kind==='string'&&s.kind.startsWith('plugin:')){ const [,plugin,action]=s.kind.split(':'); const params={};
+    Object.keys(s).forEach(k=>{ if(!['kind','then','else','body','default','cases'].includes(k))params[k]=String(s[k]); });
+    return {kind:'plugin',plugin,action,params}; } return s; }); }
+function fromWire(list){ return (list||[]).map(function w(s){ s={..._mapKids({...s},w)};
+  if(s.kind==='plugin'){ const o={kind:'plugin:'+s.plugin+':'+s.action}; Object.entries(s.params||{}).forEach(([k,v])=>o[k]=v); return o; }
+  return s; }); }
+function _fieldType(f){ return f.kind==='select'?('select:'+(f.options||[]).join('|')):(f.kind==='number'?'number':(f.kind==='bool'?'bool':'text')); }
+function registerPluginSubs(ps){ const keys=[]; (ps||[]).forEach(p=>(p.actions||[]).forEach(a=>{
+    const k='plugin:'+p.name+':'+a.name; SA_KINDS[k]=(a.fields||[]).map(f=>[f.key,_fieldType(f)]); SA_DOCS[k]=a.doc||''; keys.push(k); }));
+  SA_GROUPS['Plugins']=keys; if(!keys.length)delete SA_GROUPS['Plugins']; }
+function renderPluginCards(ps){ const grid=document.getElementById('intgrid_plugins'); if(!grid)return;
+  grid.querySelectorAll('.plugincard').forEach(n=>n.remove());
+  const empty=document.getElementById('plugins_empty'); if(empty)empty.style.display=(ps&&ps.length)?'none':'';
+  (ps||[]).forEach(p=>{ const c=p.card||{}; const cfg=p.config||{}; const on=!!cfg.enabled;
+    const sec=document.createElement('section'); sec.className='card intcard plugincard'; sec.id='card_plugin_'+p.name; if(c.has_switch&&!on)sec.classList.add('off');
+    const sw=c.has_switch?`<label class="chk intsw" onclick="event.stopPropagation()" title="Ligar / desligar"><input type="checkbox" id="pl_${p.name}_switch" ${on?'checked':''} onchange="pluginToggle('${p.name}',this.checked)"></label>`:'';
+    const badge=c.has_status?`<span class="intbadge red" id="pl_${p.name}_badge">—</span>`:'';
+    const fields=(c.fields||[]).map(f=>`<div><label>${esc(f.label)}</label><input id="pl_${p.name}_${f.key}" type="${f.kind==='number'?'number':(f.kind==='password'?'password':'text')}" placeholder="${esc(f.placeholder||'')}" value="${esc(cfg[f.key]==null?'':cfg[f.key])}"></div>`).join('');
+    const pages=(c.pages||[]).map(pg=>`<p class="hint" style="margin:6px 0 0"><b>${esc(pg.label||pg.path)}</b> (browser source): <code>${esc(location.origin+'/plugin/'+p.name+'/'+pg.path)}</code></p>`).join('');
+    sec.innerHTML=`<div class="intcard-head" onclick="this.closest('.intcard').classList.toggle('open')">
+      <span class="caret2">▸</span>
+      <span class="pbrand" style="color:${esc(c.color||'#9aa0a6')}"><svg class="plogo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">${c.icon||''}</svg><span class="intcard-title">${esc(c.title||p.name)}</span></span>
+      ${badge}${sw}</div>
+      <div class="intcard-body"><div class="grid">${fields}</div>${pages}
+      <button class="go" style="margin-top:12px" onclick="pluginSave('${p.name}',this)">Save</button></div>`;
+    grid.appendChild(sec); if(c.has_status)pluginStatus(p.name); }); }
+function _pluginCfg(name){ const p=(window._plugins||[]).find(x=>x.name===name)||{}; const c=(p.card&&p.card.fields)||[]; const cfg={};
+  const sw=document.getElementById('pl_'+name+'_switch'); if(p.card&&p.card.has_switch)cfg.enabled=sw?sw.checked:!!(p.config&&p.config.enabled);
+  c.forEach(f=>{ const el=document.getElementById('pl_'+name+'_'+f.key); if(!el)return; cfg[f.key]=f.kind==='number'?(el.value===''?0:Number(el.value)):el.value.trim(); }); return cfg; }
+async function pluginSave(name,btn){ const cfg=_pluginCfg(name); await j('PUT','/api/plugins/'+name+'/config',cfg);
+  const p=(window._plugins||[]).find(x=>x.name===name); if(p)p.config=cfg; toast('Alterações salvas');
+  if(btn){ const card=btn.closest('.intcard'); if(card)card.classList.remove('open'); } pluginStatus(name); }
+async function pluginToggle(name,on){ const card=document.getElementById('card_plugin_'+name); if(card)card.classList.toggle('off',!on);
+  const cfg=_pluginCfg(name); cfg.enabled=on; await j('PUT','/api/plugins/'+name+'/config',cfg);
+  const p=(window._plugins||[]).find(x=>x.name===name); if(p)p.config=cfg; pluginStatus(name); }
+async function pluginStatus(name){ const b=document.getElementById('pl_'+name+'_badge'); if(!b)return;
+  b.className='intbadge'; b.textContent='conectando…';
+  let d; try{ d=await j('GET','/api/plugins/'+name+'/status'); }catch(_){ b.className='intbadge red'; b.textContent='desconectado'; return; }
+  if(!d.enabled){ b.className='intbadge red'; b.textContent='desligado'; return; }
+  b.className='intbadge '+(d.reachable?'green':'red'); b.textContent=d.reachable?'conectado':'desconectado'; }
+async function loadPlugins(){ let ps; try{ ps=await j('GET','/api/plugins'); }catch(_){ return; } window._plugins=ps||[];
+  registerPluginSubs(window._plugins); renderPluginCards(window._plugins); renderDraft(); }
+async function restartBot(btn){
+  if(!confirm('Reiniciar o bot agora? O painel fica fora do ar alguns segundos enquanto recarrega.'))return;
+  const hint=document.getElementById('restart_hint'); btn.disabled=true; if(hint)hint.textContent='reiniciando…';
+  try{ await j('POST','/api/restart',{}); }catch(_){ /* connection may already be dropping */ }
+  // The old process keeps answering for ~1-2s until the scheduled restart fires;
+  // wait before polling so we don't reload into the brief downtime window.
+  let tries=0;
+  const start=()=>{ const t=setInterval(async()=>{ tries++;
+    try{ await j('GET','/api/health'); clearInterval(t); if(hint)hint.textContent='pronto, recarregando…'; location.reload(); }
+    catch(_){ if(hint)hint.textContent='reiniciando… ('+tries+'s)';
+      if(tries>60){ clearInterval(t); if(hint)hint.textContent='demorou demais; recarregue a página manualmente'; btn.disabled=false; } }
+  },1000); };
+  setTimeout(start,3000); }
+function ovRewardRow(selId){ const wrap=document.getElementById('ov_ign_rewards'); if(!wrap)return;
+  const row=document.createElement('div'); row.style='display:flex;gap:6px;margin-top:6px';
+  const s=document.createElement('select'); s.className='ov-rw-sel'; s.style='flex:1';
+  const none=document.createElement('option'); none.value=''; none.textContent='— escolher reward —'; s.appendChild(none);
+  for(const r of (window._ovRewards||[])){ const o=document.createElement('option'); o.value=r.id; o.textContent=r.title+' ('+r.platform+')'; s.appendChild(o); }
+  if(selId){ if(![...s.options].some(o=>o.value===selId)){ const o=document.createElement('option'); o.value=selId; o.textContent='(removido) '+selId; s.appendChild(o); } s.value=selId; }
+  const del=document.createElement('button'); del.type='button'; del.className='del'; del.textContent='🗑'; del.title='remover'; del.onclick=()=>row.remove();
+  row.appendChild(s); row.appendChild(del); wrap.appendChild(row); }
+function addIgnoreReward(selId){ ovRewardRow(selId||''); }
+async function loadOverlayCfg(){ let c; try{ c=await j('GET','/api/overlay/chat'); }catch(_){ return; }
+  const h=document.getElementById('ov_html'),s=document.getElementById('ov_css'),jj=document.getElementById('ov_js');
+  if(h)h.value=c.html||''; if(s)s.value=c.css||''; if(jj)jj.value=c.js||'';
+  const iu=document.getElementById('ov_ign_users'); if(iu)iu.value=c.ignoreUsers||'';
+  const ip=document.getElementById('ov_ign_prefixes'); if(ip)ip.value=c.ignorePrefixes||'';
+  try{ const r=await j('GET','/api/rewards'); window._ovRewards=r.rewards||[]; }catch(_){ window._ovRewards=window._ovRewards||[]; }
+  const wrap=document.getElementById('ov_ign_rewards'); if(wrap){ wrap.innerHTML=''; for(const id of (c.ignoreRewards||[])) ovRewardRow(id); }
+  const u=document.getElementById('overlay_url'); if(u)u.textContent=location.origin+'/overlay/chat';
+  const du=document.getElementById('dock_chat_url'); if(du)du.textContent=location.origin+'/dock/chat'; }
+async function saveOverlayCfg(btn){
+  const rewards=[...document.querySelectorAll('#ov_ign_rewards .ov-rw-sel')].map(s=>s.value).filter(Boolean);
+  const body={html:document.getElementById('ov_html').value,css:document.getElementById('ov_css').value,js:document.getElementById('ov_js').value,
+    ignoreUsers:document.getElementById('ov_ign_users').value,ignorePrefixes:document.getElementById('ov_ign_prefixes').value,ignoreRewards:rewards};
+  await j('PUT','/api/overlay/chat',body); toast('Overlay salvo'); const c=btn.closest('.intcard'); if(c)c.classList.remove('open'); }
+// The Stream Info card now only lists the OBS dock URLs; editing lives in the dock.
+function loadStreamInfo(){
+  const du=document.getElementById('si_dock_url'); if(du)du.textContent=location.origin+'/dock/streaminfo';
+  const eu=document.getElementById('dock_events_url'); if(eu)eu.textContent=location.origin+'/dock/events';
+}
+function intSave(btn){ saveSettings(); const c=btn.closest('.intcard'); if(c)c.classList.remove('open'); }
+async function loadIntegrations(){ let arr; try{ arr=await j('GET','/api/integrations'); }catch(_){ return; }
+  arr.forEach(i=>{ const b=document.getElementById(i.key+'_badge');
+    if(b){ b.className='intbadge '+(i.connected?'green':'red'); b.textContent=i.connected?'conectado':(i.want?'conectando…':'desconectado'); }
+    const cb=document.getElementById(i.key+'_enabled'); if(cb)cb.checked=!!i.auto;
+    const sw=document.getElementById(i.key+'_switch'); if(sw)sw.checked=!!i.auto;
+    const card=document.getElementById('card_int_'+i.key); if(card)card.classList.toggle('off', !i.auto); });
+  (window._plugins||[]).forEach(p=>{ if(p.card&&p.card.has_status)pluginStatus(p.name); }); }
+// ---------- i18n (EN / pt-BR) ----------
+// Translation pairs [english, portuguese]. The engine translates the panel in
+// either direction by exact trimmed string, covering static HTML and any content
+// JS inserts later (via a MutationObserver). Strings equal in both languages are
+// omitted. I18N_PAIRS_FILL_START / _END mark the auto-generated table.
+const I18N_PAIRS = [
+/* I18N_PAIRS_FILL_START */
+  // nav / sections
+  ["Overview","Visão geral"],
+  ["Live chat","Chat ao vivo"],
+  ["Commands","Comandos"],
+  ["Triggers","Gatilhos"],
+  ["Management","Gerenciamento"],
+  ["Queues","Filas"],
+  ["Variables","Variáveis"],
+  ["User Vars","Vars de Usuário"],
+  ["Quotes","Citações"],
+  ["User Groups","Grupos de Usuários"],
+  ["Connections","Conexões"],
+  ["Accounts","Contas"],
+  ["Integrations","Integrações"],
+  ["Sounds","Sons"],
+  ["Events","Eventos"],
+  // dashboard / chat
+  ["Live chat + events feed.","Chat ao vivo + feed de eventos."],
+  ["Twitch + Kick + YouTube unificado. Clique no nome para moderar.","Twitch + Kick + YouTube unified. Click a name to moderate."],
+  ["message…","mensagem…"],
+  ["Send","Enviar"],
+  // docs
+  ["Everything the bot does: sub-actions, variables and events.","Tudo que o bot faz: sub-ações, variáveis e eventos."],
+  ["Variables (use in text)","Variáveis (usar no texto)"],
+  ["Events (for Bind event)","Eventos (pra Bind event)"],
+  ["Sub-actions","Sub-ações"],
+  ["Fires an action when the event occurs. Rewards: use the \"Bind to action\" button on the Rewards tab (binds by ID, survives renaming).","Dispara uma action quando o evento ocorre. Rewards: use o botão \"Bind to action\" na aba Rewards (vincula pelo ID, sobrevive a renomear)."],
+  // commands
+  ["Chat trigger → reply text or an Action.","Gatilho de chat → texto de resposta ou uma Action."],
+  ["reply text ($user, $var.NAME)","texto de resposta ($user, $var.NAME)"],
+  ["— or run Action —","— ou rodar uma Action —"],
+  ["global cooldown (s)","cooldown global (s)"],
+  ["global cd s","cd global s"],
+  ["per-user cooldown (s)","cooldown por usuário (s)"],
+  ["user cd s","cd usuário s"],
+  ["anyone","qualquer um"],
+  ["allow only","só permitir"],
+  ["deny","negar"],
+  ["groups: moderator,vip,subscriber","grupos: moderator,vip,subscriber"],
+  ["Add","Adicionar"],
+  ["Cancel","Cancelar"],
+  ["basic","básico"],
+  ["start","início"],
+  ["exact","exato"],
+  ["anywhere","qualquer lugar"],
+  ["case sensitive","diferencia maiúsculas"],
+  ["aliases (comma)","aliases (vírgula)"],
+  ["Cooldown 0 = off. Groups (comma): broadcaster, moderator, vip, subscriber, everyone. Broadcaster always exempt. Uncheck a platform to restrict.","Cooldown 0 = desligado. Grupos (vírgula): broadcaster, moderator, vip, subscriber, everyone. Broadcaster sempre isento. Desmarque uma plataforma para restringir."],
+  // actions
+  ["An Action = ordered list of sub-actions. The core of nuggtbot.","Uma Action = lista ordenada de sub-ações. O núcleo do nuggtbot."],
+  ["Import from Streamer.bot","Importar do Streamer.bot"],
+  ["Share: export / import nuggtbot code","Compartilhar: exportar / importar código nuggtbot"],
+  ["Export all → code","Exportar tudo → código"],
+  ["Import code","Importar código"],
+  ["BLV1:… paste a code here to import, or Export to fill it","BLV1:… cole um código aqui para importar, ou Exporte para preenchê-lo"],
+  ["filter…","filtrar…"],
+  ["+ New","+ Novo"],
+  ["New action","Nova action"],
+  ["action name","nome da action"],
+  ["group (optional)","grupo (opcional)"],
+  ["queue (blank = Default)","fila (vazio = Default)"],
+  ["concurrent","concorrente"],
+  ["random","aleatório"],
+  ["always run","sempre rodar"],
+  ["Sub-Actions","Sub-Ações"],
+  ["Advanced: edit sub-actions as JSON","Avançado: editar sub-ações como JSON"],
+  ["Load current","Carregar atual"],
+  ["Apply JSON","Aplicar JSON"],
+  ["Save","Salvar"],
+  ["Commands and events bound to the selected action.","Comandos e eventos vinculados à action selecionada."],
+  // queues
+  ["Action Queues","Filas de Action"],
+  ["Every action runs in a queue. Default is non-blocking (overlap). A blocking queue runs one action at a time, in order.","Toda action roda numa fila. A Default é não-bloqueante (sobrepõe). Uma fila bloqueante roda uma action por vez, em ordem."],
+  ["queue name","nome da fila"],
+  ["blocking (sequential)","bloqueante (sequencial)"],
+  ["Create / set","Criar / definir"],
+  ["Pause all","Pausar todas"],
+  ["Resume all","Retomar todas"],
+  // events
+  ["Twitch events (via chat: sub/resub/gift/raid/cheer) run an Action. Follow needs EventSub (later).","Eventos da Twitch (via chat: sub/resub/gift/raid/cheer) rodam uma Action. Follow precisa de EventSub (depois)."],
+  ["Bind","Vincular"],
+  // user vars
+  ["User Variables","Variáveis de Usuário"],
+  ["Per-user values (counters, leaderboards). Set via sub-actions","Valores por usuário (contadores, rankings). Defina via sub-ações"],
+  ["(blank user = the triggering user); read with","(usuário vazio = quem disparou); leia com"],
+  ["Values","Valores"],
+  ["Refresh","Atualizar"],
+  // quotes
+  ["Built-in quote store. Use sub-actions","Armazenamento de citações embutido. Use as sub-ações"],
+  ["in actions bound to chat commands (e.g. !addquote → quote_add text=%rawInput%, !quote → quote_show id=%input0%).","em actions vinculadas a comandos de chat (ex. !addquote → quote_add text=%rawInput%, !quote → quote_show id=%input0%)."],
+  ["quote text","texto da citação"],
+  ["said by (optional)","dito por (opcional)"],
+  ["game (optional)","jogo (opcional)"],
+  // user groups
+  ["Custom groups of users. Use a group name in a command's permission \"groups\" field, or manage membership with sub-actions","Grupos personalizados de usuários. Use o nome de um grupo no campo de permissão \"groups\" de um comando, ou gerencie os membros com as sub-ações"],
+  ["group name","nome do grupo"],
+  ["user login (optional)","login do usuário (opcional)"],
+  // rewards
+  ["Channel Point Rewards","Recompensas de Pontos do Canal"],
+  ["Rewards from Twitch + Kick. Create under \"Both\" to have the same reward on both platforms — they stay linked by the","Rewards de Twitch + Kick. Crie em \"Ambas\" para ter o mesmo reward nas duas plataformas — eles ficam vinculados pelo"],
+  ["(not by name) in a single row with both labels, so renaming on Twitch/Kick doesn't unlink them. Use","(não pelo nome) numa linha só com as duas etiquetas, então renomear na Twitch/Kick não desvincula. Use"],
+  ["and a single action runs on both. To unlink: delete and recreate choosing a single platform.","e um único action roda nas duas. Para desvincular: delete e crie de novo escolhendo só uma plataforma."],
+  ["Create reward","Criar reward"],
+  ["Both (Twitch + Kick)","Ambas (Twitch + Kick)"],
+  ["title","título"],
+  ["cost","custo"],
+  ["description (optional)","descrição (opcional)"],
+  ["user input required","exige entrada do usuário"],
+  ["Create","Criar"],
+  ["Existing rewards","Rewards existentes"],
+  ["Enable selected","Ativar selecionados"],
+  ["Enable the rewards checked on the right","Ativar os rewards marcados à direita"],
+  ["Disable selected","Desativar selecionados"],
+  ["Disable the rewards checked on the right","Desativar os rewards marcados à direita"],
+  // timers
+  ["Automatic message sent every N seconds, to the chosen chats (Twitch / Kick / YouTube) and from the chosen account (bot or broadcaster).","Mensagem automática enviada a cada N segundos, nos chats escolhidos (Twitch / Kick / YouTube) e pela conta escolhida (bot ou broadcaster)."],
+  ["name","nome"],
+  ["secs","segs"],
+  ["message","mensagem"],
+  ["Account:","Conta:"],
+  // variables
+  ["Global variables. Use as","Variáveis globais. Use como"],
+  ["value","valor"],
+  ["Set","Definir"],
+  // accounts
+  ["Platform credentials: Twitch, Kick, YouTube.","Credenciais das plataformas: Twitch, Kick, YouTube."],
+  ["— credentials","— credenciais"],
+  ["Channel (to join, blank = broadcaster)","Canal (para entrar, vazio = broadcaster)"],
+  ["Paste the app's Client ID. If the app is a","Cole o Client ID do app. Se o app for do tipo"],
+  ["Confidential","Confidencial"],
+  ["client type (Twitch default), also paste the Client Secret — it's required to refresh the token (keeps the bot from disconnecting after a few hours). A","(padrão da Twitch), cole também o Client Secret — ele é necessário para renovar o token (evita que o bot desconecte depois de algumas horas). Um tipo"],
+  ["Public","Público"],
+  ["client type works without a secret.","funciona sem secret."],
+  ["Channel","Canal"],
+  ["Chat WS token","Token WS do chat"],
+  ["Kick is a confidential client — paste","A Kick é um cliente confidencial — cole"],
+  [". Register redirect URI",". Registre a redirect URI"],
+  ["from kick.com (to read chat; Kick uses Centrifugo now). It's public.","do kick.com (pra ler o chat; a Kick usa Centrifugo agora). É público."],
+  ["Video ID (optional, blank = detects the active live)","Video ID (opcional, blank = detecta a live ativa)"],
+  ["Create a project in the","Crie um projeto no"],
+  [", enable the",", ative a"],
+  [", create an OAuth client of type",", crie um OAuth client tipo"],
+  ["and paste Client ID + Secret. Register the exact redirect URI","e cole Client ID + Secret. Registre a redirect URI exata"],
+  ["in the console. Log in from the panel over","no console. Faça o login pelo painel em"],
+  ["(Google rejects http redirects outside localhost). It reads the live chat and fires actions/commands like Twitch/Kick; the account","(o Google rejeita redirect http fora de localhost). Lê o chat da live e dispara actions/comandos como Twitch/Kick; a conta"],
+  ["(optional) sends messages.","(opcional) envia mensagens."],
+  ["Save app settings","Salvar config do app"],
+  // apis
+  ["Third-party API credentials (donations/events). Stored in","Credenciais de APIs de terceiros (doações/eventos). Guardadas em"],
+  ["OAuth2 (client credentials). Create an app at livepix.gg and paste Client ID + Secret. Docs:","OAuth2 (client credentials). Crie um app em livepix.gg e cole Client ID + Secret. Docs:"],
+  ["OAuth2 (client id/secret) for the API; the","OAuth2 (client id/secret) pra API; o"],
+  ["(Streamlabs → Settings → API Settings) is what listens for donations/alerts in real time. Docs:","(Streamlabs → Settings → API Settings) é o que escuta doações/alertas em tempo real. Docs:"],
+  ["Account ID (channel)","Account ID (canal)"],
+  ["Get the","Pegue o"],
+  ["at streamelements.com → Account → Channels/Show secrets. Real-time tip events via astro websocket. Docs:","em streamelements.com → Account → Channels/Show secrets. Eventos de tip em tempo real via astro websocket. Docs:"],
+  ["Save APIs","Salvar APIs"],
+  // backups
+  ["Backup & Restore","Backup & Restauração"],
+  ["Snapshots of all config (actions, commands, settings, variables, quotes, groups). Auto every hour (keeps 50). Restoring replaces everything.","Snapshots de toda a config (actions, comandos, settings, variáveis, citações, grupos). Automático a cada hora (mantém 50). Restaurar substitui tudo."],
+  ["Backup now","Fazer backup agora"],
+  // sounds
+  ["Upload audio, play it through a Browser Source. In OBS add a Browser Source with URL","Envie um áudio e toque por um Browser Source. No OBS adicione um Browser Source com a URL"],
+  [". Use sub-action",". Use a sub-ação"],
+  ["(file = the name below).","(file = o nome abaixo)."],
+  // integrations
+  ["Native integrations","Integrações nativas"],
+  ["Turn on / off","Ligar / desligar"],
+  ["Connect","Conectar"],
+  ["On","Ligar"],
+  ["Off","Desligar"],
+  ["Always connect automatically","Sempre conectar automaticamente"],
+  ["Address","Endereço"],
+  ["Port","Porta"],
+  ["Password","Senha"],
+  ["First connect shows an approval popup in VTube Studio; the token is saved.","A primeira conexão mostra um popup de aprovação no VTube Studio; o token é salvo."],
+  ["Turn all webhooks on / off","Ligar / desligar todos os webhooks"],
+  ["Name each webhook, then use the name in the","Dê um nome a cada webhook e use o nome na sub-ação"],
+  ["sub-action's","no campo"],
+  ["field (e.g. \"clips\", \"prints\").","(ex. \"clips\", \"prints\")."],
+  ["name (clips, prints…)","nome (clips, prints…)"],
+  ["Chat Overlay","Overlay de Chat"],
+  ["Paste your own chat overlay HTML/CSS/JS (Streamlabs style). The bot feeds the chat at","Cole seu próprio HTML/CSS/JS do overlay de chat (estilo Streamlabs). O bot alimenta o chat em"],
+  ["(browser source, appears on stream for everyone):","(browser source, aparece na live pra todos):"],
+  ["Chat overlay code:","Código do overlay de chat:"],
+  ["(public overlay only — doesn't affect the moderation dock)","(só o overlay público — não afeta o dock de moderação)"],
+  ["Ignore in overlay","Ignorar no overlay"],
+  ["(only hides in the public overlay, the dock still sees everything)","(só esconde no overlay público, o dock continua vendo tudo)"],
+  ["Users","Usuários"],
+  ["(one per line)","(um por linha)"],
+  ["Command prefixes","Prefixos de comando"],
+  ["Ignored rewards","Rewards ignorados"],
+  ["Stream Info (title + category)","Stream Info (título + categoria)"],
+  ["Browser docks for your OBS. Title/category editing lives in the dock itself.","Browser docks pro seu OBS. A edição de título/categoria fica na própria dock."],
+  ["(edit title + category inside OBS):","(editar título + categoria dentro do OBS):"],
+  ["(read + moderate):","(ler + moderar):"],
+  ["(subs, rewards, bits, raids, follows):","(subs, recompensas, bits, raids, follows):"],
+  ["Restart bot (load new plugins)","Reiniciar bot (carregar plugins novos)"],
+  ["No plugins installed. Put a","Nenhum plugin instalado. Coloque um arquivo"],
+  ["and restart the bot.","e reinicie o bot."],
+  // JS: toasts / dynamic labels / statuses
+  ["Changes saved","Alterações salvas"],
+  ["Event bound","Evento vinculado"],
+  ["Command added","Comando adicionado"],
+  ["choose at least one chat","escolha ao menos um chat"],
+  ["Reward enabled","Reward ativado"],
+  ["Reward disabled","Reward desativado"],
+  ["No reward selected","Nenhum reward selecionado"],
+  ["Reward created","Reward criado"],
+  ["deleted","deletado"],
+  ["select a platform","selecione uma plataforma"],
+  ["error sending","erro ao enviar"],
+  ["Overlay saved","Overlay salvo"],
+  ["restore","restaurar"],
+  ["download","baixar"],
+  ["saved ✓","salvo ✓"],
+  ["No user variables yet.","Nenhuma variável de usuário ainda."],
+  ["delete group","excluir grupo"],
+  ["play","tocar"],
+  ["remove image","remover imagem"],
+  ["seconds (e.g. 4.5 or 0.15)","segundos (ex. 4,5 ou 0,15)"],
+  ["image","imagem"],
+  ["uploading…","enviando…"],
+  ["uploaded ✓","enviado ✓"],
+  ["blocking","bloqueante"],
+  ["non-blocking","não-bloqueante"],
+  ["paused","pausada"],
+  ["resume","retomar"],
+  ["pause","pausar"],
+  ["clear","limpar"],
+  ["+ add sub-action…","+ adicionar sub-ação…"],
+  ["time","tempo"],
+  ["milliseconds — 1000 = 1 second, 60000 = 1 minute","milissegundos — 1000 = 1 segundo, 60000 = 1 minuto"],
+  ["— choose a reward —","— escolha um reward —"],
+  ["— choose reward —","— escolher reward —"],
+  ["— choose a sound —","— escolha um som —"],
+  ["Logic blocks","Blocos de lógica"],
+  ["case =","caso ="],
+  ["remove case","remover caso"],
+  ["+ add case","+ adicionar caso"],
+  ["Save edit","Salvar edição"],
+  ["Save the action first, then bind commands/events here.","Salve a action primeiro, depois vincule comandos/eventos aqui."],
+  ["Run","Rodar"],
+  ["command","comando"],
+  ["event","evento"],
+  ["No triggers yet.","Nenhum gatilho ainda."],
+  ["!command","!comando"],
+  ["Bind command","Vincular comando"],
+  ["event (sub, raid, follow, reward title…)","evento (sub, raid, follow, título do reward…)"],
+  ["Bind event","Vincular evento"],
+  ["edit","editar"],
+  ["exported ✓ (copy the code)","exportado ✓ (copie o código)"],
+  ["error","erro"],
+  ["Not connected","Não conectado"],
+  ["connected","conectado"],
+  ["Main account","Conta principal"],
+  ["Bot account","Conta do bot"],
+  ["log in","entrar"],
+  ["Logged in as","Logado como"],
+  ["Logout","Sair"],
+  ["Device Code Flow — no secret. Click Login, open the link and type the code.","Device Code Flow — sem secret. Clique em Login, abra o link e digite o código."],
+  ["Opens Kick in a new tab to authorize. Redirect URI must be registered:","Abre a Kick numa nova aba pra autorizar. A redirect URI precisa estar registrada:"],
+  ["Opens Google in a new tab to authorize. Register the redirect URI:","Abre o Google numa nova aba pra autorizar. Registre a redirect URI:"],
+  ["Login","Entrar"],
+  ["Open","Abra"],
+  ["and enter code:","e digite o código:"],
+  ["Authorizing in the new tab… this updates automatically.","Autorizando na nova aba… isto atualiza automaticamente."],
+  ["linked","linkado"],
+  ["Enable/disable on the channel(s)","Ativar/desativar no(s) canal(is)"],
+  ["Bind to action","Vincular à action"],
+  ["delete","excluir"],
+  ["Select for bulk action","Selecionar p/ ação em massa"],
+  ["reconnecting…","reconectando…"],
+  ["Ban","Banir"],
+  ["Delete message","Deletar mensagem"],
+  ["nothing configured","nada configurado"],
+  ["connecting…","conectando…"],
+  ["disconnected","desconectado"],
+  ["off","desligado"],
+  ["restarting…","reiniciando…"],
+  ["ready, reloading…","pronto, recarregando…"],
+  ["took too long; reload the page manually","demorou demais; recarregue a página manualmente"],
+  ["remove","remover"],
+  // docs: variable descriptions
+  ["Who triggered the command","Quem disparou o comando"],
+  ["Everything after the command","Tudo depois do comando"],
+  ["Word N after the command (empty if none)","Palavra N depois do comando (vazio se não houver)"],
+  ["Numeric ID of who triggered (Twitch/Kick)","ID numérico de quem disparou (Twitch/Kick)"],
+  ["Nick color of who triggered","Cor do nick de quem disparou"],
+  ["Value of a global variable","Valor de uma variável global"],
+  ["Shortcut for who triggered","Atalho pra quem disparou"],
+  ["Filled on the clipcreated event","Preenchidas no evento clipcreated"],
+  // docs: sub-action one-liners
+  ["Sends a message in Twitch chat.","Manda mensagem no chat da Twitch."],
+  ["Replies in the chat WHERE the command came from (Twitch or Kick).","Responde no chat de ONDE o comando veio (Twitch ou Kick)."],
+  ["Waits X milliseconds before the next sub-action.","Espera X milissegundos antes da próxima sub-ação."],
+  ["Stores a value in a global variable.","Grava um valor numa variável global."],
+  ["Adds a number to a global variable (negative subtracts).","Soma um número a uma variável global (negativo subtrai)."],
+  ["If the comparison is false, STOPS the action here.","Se a comparação for falsa, PARA a action aqui."],
+  ["If false, skips the next N sub-actions.","Se falsa, pula as próximas N sub-ações."],
+  ["Ends the action.","Encerra a action."],
+  ["Exits the current loop (repeat/while).","Sai do loop (repeat/while) atual."],
+  ["Skips to the next loop iteration.","Pula pra próxima volta do loop."],
+  ["GET on a URL, saves the body to a variable.","GET numa URL, salva o corpo numa variável."],
+  ["Random number between min and max into a variable.","Número aleatório entre min e max numa variável."],
+  ["Writes text to a file (append or overwrite).","Escreve texto num arquivo (append ou sobrescreve)."],
+  ["Reads a whole file into a variable.","Lê um arquivo inteiro pra uma variável."],
+  ["Enables a timer.","Liga um timer."],
+  ["Disables a timer.","Desliga um timer."],
+  ["Toggles a timer.","Inverte um timer."],
+  ["Writes a line to the events feed.","Escreve uma linha no feed de eventos."],
+  ["Runs another action by name.","Roda outra action pelo nome."],
+  ["Fires a custom event (runs triggers bound to it).","Dispara um evento custom (roda triggers ligados a ele)."],
+  ["Adds a user to a custom group.","Põe um usuário num grupo custom."],
+  ["Removes a user from a group.","Tira um usuário de um grupo."],
+  ["Stores a per-user value (blank = the triggering user).","Grava valor por-usuário (branco = quem disparou)."],
+  ["Adds a number to a per-user variable.","Soma número a uma variável por-usuário."],
+  ["Reads a per-user variable into a normal variable.","Lê uma variável por-usuário pra uma variável normal."],
+  ["Minutes → '1y 3m 16d 15h 23min'.","Minutos → '1y 3m 16d 15h 23min'."],
+  ["Saves a quote.","Salva uma quote."],
+  ["Sends a quote (id, or random if empty).","Manda uma quote (id, ou aleatória se vazio)."],
+  ["Plays audio through the Browser Source (/overlay).","Toca um áudio pelo Browser Source (/overlay)."],
+  ["Changes the stream title.","Muda o título da live."],
+  ["Changes the category/game (by name).","Muda a categoria/jogo (por nome)."],
+  ["Announcement in chat (color: blue/green/orange/purple/primary).","Announcement no chat (color: blue/green/orange/purple/primary)."],
+  ["Creates a clip.","Cria um clip."],
+  ["Creates a stream marker.","Cria um stream marker."],
+  ["Shoutout for a channel.","Shoutout de um canal."],
+  ["Bans (duration 0) or times out (duration seconds) a user.","Bane (duration 0) ou timeout (duration segundos) um usuário."],
+  ["Unbans.","Desbane."],
+  ["Clears the chat.","Limpa o chat."],
+  ["Runs an ad (length seconds).","Roda ad (length segundos)."],
+  ["Chat mode (emote/followers/subscribers/slow) on/off + duration.","Modo do chat (emote/followers/subscribers/slow) on/off + duração."],
+  ["Creates a poll (choices separated by |).","Cria enquete (choices separadas por |)."],
+  ["Grants moderator.","Dá moderador."],
+  ["Removes moderator.","Tira moderador."],
+  ["Grants VIP.","Dá VIP."],
+  ["Removes VIP.","Tira VIP."],
+  ["Warns a user.","Avisa (warn) um usuário."],
+  ["Creates a prediction (outcomes separated by |).","Cria predição (outcomes separados por |)."],
+  ["Starts a raid to another channel.","Inicia um raid pra outro canal."],
+  ["How long the user has followed, into a variable (or 'not following').","Há quanto tempo o usuário segue, pra uma variável (ou 'não segue')."],
+  ["Snoozes the next ad.","Adia o próximo ad."],
+  ["Total followers into a variable.","Total de followers numa variável."],
+  ["Total subs into a variable.","Total de subs numa variável."],
+  ["Sends a whisper to a user.","Manda whisper pra um usuário."],
+  ["Sends a message in Kick chat.","Manda mensagem no chat da Kick."],
+  ["Bans (duration 0) or times out (duration minutes) on Kick.","Bane (duration 0) ou timeout (duration minutos) na Kick."],
+  ["Unbans on Kick.","Desbane na Kick."],
+  ["Clears Kick chat (deletes recent messages seen since the bot started; Kick has no clear-all).","Limpa o chat da Kick (apaga as mensagens recentes vistas desde que o bot subiu; a Kick não tem limpar tudo)."],
+  ["Enables/disables, toggles, or changes the cost of a reward (Twitch, Kick or linked — linked does both). cost is only used with op=cost.","Liga/desliga, inverte (toggle) ou muda o custo de um reward (Twitch, Kick ou linkado — linkado faz nos dois). cost só é usado em op=cost."],
+  ["Switches the OBS scene.","Troca a cena do OBS."],
+  ["Shows/hides a source in a scene.","Mostra/esconde uma fonte numa cena."],
+  ["Toggles recording.","Liga/desliga gravação."],
+  ["Toggles a source filter.","Liga/desliga um filtro de fonte."],
+  ["Starts the replay buffer.","Liga replay buffer."],
+  ["Stops the replay buffer.","Desliga replay buffer."],
+  ["Saves the replay buffer.","Salva o replay buffer."],
+  ["Starts streaming.","Começa a transmitir."],
+  ["Stops the stream.","Para a transmissão."],
+  ["Toggles the stream.","Inverte a transmissão."],
+  ["Triggers a VTube Studio hotkey.","Dispara um hotkey do VTube Studio."],
+  ["Throws an item in the Throwing System (T.I.T.S.).","Joga um item no Throwing System (T.I.T.S.)."],
+  ["Posts to a Discord channel via webhook (url = webhook name or literal URL).","Posta num canal do Discord via webhook (url = nome do webhook ou URL literal)."],
+  ["If true runs 'then', else 'else' (nested blocks).","Se verdadeiro roda 'then', senão 'else' (blocos aninhados)."],
+  ["Runs 'body' N times.","Roda 'body' N vezes."],
+  ["Runs 'body' while the comparison is true (up to max_iter).","Roda 'body' enquanto a comparação for verdadeira (até max_iter)."],
+  ["Compares the variable with each case (eq) and runs its body.","Compara a variável com cada caso (eq) e roda o corpo."],
+/* I18N_PAIRS_FILL_END */
+];
+const I18N_EN2PT={}, I18N_PT2EN={};
+for(const pr of I18N_PAIRS){ const e=pr[0], p=pr[1]; if(e!==p){ if(!(e in I18N_EN2PT))I18N_EN2PT[e]=p; if(!(p in I18N_PT2EN))I18N_PT2EN[p]=e; } }
+let LANG = localStorage.getItem('lang') || ((navigator.language||'').toLowerCase().startsWith('pt')?'pt':'en');
+function i18nMap(){ return LANG==='pt'?I18N_EN2PT:I18N_PT2EN; }
+function i18nNode(root){
+  const m=i18nMap();
+  const walker=document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
+  const texts=[]; let n; while(n=walker.nextNode()) texts.push(n);
+  for(const t of texts){ const raw=t.nodeValue; const k=raw.trim(); if(!k) continue; const v=m[k]; if(v!=null && v!==k) t.nodeValue=raw.replace(k,v); }
+  const els = root.nodeType===1 ? [root].concat([...root.querySelectorAll('*')]) : [...(root.querySelectorAll?root.querySelectorAll('*'):[])];
+  for(const el of els){ if(!el.getAttribute)continue; for(const a of ['placeholder','title']){ if(el.hasAttribute(a)){ const raw=el.getAttribute(a); const k=raw.trim(); const v=m[k]; if(v!=null && v!==k) el.setAttribute(a, raw.replace(k,v)); } } }
+}
+function applyLang(){ document.documentElement.lang=LANG; const l=document.getElementById('langlbl'); if(l)l.textContent=LANG.toUpperCase(); i18nNode(document.body); }
+function toggleLang(){ LANG = (LANG==='pt'?'en':'pt'); localStorage.setItem('lang',LANG); location.reload(); }
+// Translate anything JS inserts after load (nav, cards, docs, lists, toasts…).
+new MutationObserver(muts=>{ for(const mu of muts) for(const node of mu.addedNodes){ if(node.nodeType===1) i18nNode(node); else if(node.nodeType===3){ const raw=node.nodeValue, k=raw?raw.trim():''; if(k){ const v=i18nMap()[k]; if(v!=null && v!==k) node.nodeValue=raw.replace(k,v); } } } })
+  .observe(document.body,{childList:true,subtree:true});
+setInterval(()=>{ loadStatus(); loadIntegrations(); },5000);
+loadPlugins(); loadOverlayCfg(); loadStreamInfo(); renderDraft(); loadSettings(); loadCmds(); loadActions(); loadTriggers(); loadTimers(); loadVars(); loadStatus(); loadIntegrations(); connectWs();
+show((location.hash||'#dashboard').slice(1));
+applyLang();
+</script>
+</body>
+</html>
