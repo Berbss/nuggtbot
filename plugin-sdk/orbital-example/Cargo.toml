@@ -1,0 +1,18 @@
+[package]
+name = "orbital"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+# Build a C-ABI shared library: `liborbital.so` (Linux) / `orbital.dll` (Windows).
+crate-type = ["cdylib"]
+
+[dependencies]
+plugin-sdk = { path = ".." }
+serde_json = "1"
+reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "blocking", "json"] }
+
+[profile.release]
+strip = true
+opt-level = "z"
+lto = true
