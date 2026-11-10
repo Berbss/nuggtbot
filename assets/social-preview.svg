@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" width="1280" height="640">
+  <defs>
+    <radialGradient id="ng" cx="36%" cy="30%" r="82%">
+      <stop offset="0" stop-color="#ffd874"/><stop offset=".55" stop-color="#f0a81e"/><stop offset="1" stop-color="#c47e0d"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="22%" cy="50%" r="55%">
+      <stop offset="0" stop-color="#f0a81e" stop-opacity=".22"/>
+      <stop offset="1" stop-color="#f0a81e" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="bar" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#f0a81e"/><stop offset="1" stop-color="#ffbb33"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1280" height="640" fill="#0c0c0e"/>
+  <rect width="1280" height="640" fill="url(#glow)"/>
+  <rect x="0" y="628" width="1280" height="12" fill="url(#bar)"/>
+
+  <!-- nugget logo -->
+  <g transform="translate(96,196) scale(3.5)">
+    <path d="M21 8c9-5.5 23-3.5 29 6 3.5 5.5 4 7 8 11 4.5 4.5 3.5 12-3 17-5.5 4.2-9 7-17 8.5C28 59 16 56 9 47 3 39 3 28 8 19c3-5.5 6-7.5 13-11z" fill="url(#ng)" stroke="#9a640b" stroke-width="2.6" stroke-linejoin="round"/>
+    <circle cx="24" cy="25" r="2.3" fill="#9a640b" opacity=".65"/><circle cx="37" cy="21" r="1.8" fill="#9a640b" opacity=".55"/>
+    <circle cx="43" cy="34" r="2" fill="#9a640b" opacity=".6"/><circle cx="29" cy="38" r="1.7" fill="#9a640b" opacity=".5"/>
+    <circle cx="35" cy="47" r="1.9" fill="#9a640b" opacity=".55"/><circle cx="18" cy="34" r="1.6" fill="#9a640b" opacity=".45"/>
+  </g>
+
+  <!-- wordmark -->
+  <text x="372" y="292" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="128" letter-spacing="-3">
+    <tspan fill="#e9edf3" font-weight="600">nuggt</tspan><tspan fill="#f0a81e" font-weight="800">bot</tspan>
+  </text>
+
+  <!-- tagline -->
+  <text x="376" y="368" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="34" font-weight="500" fill="#c9cfd8">Lightweight, headless Streamer.bot alternative</text>
+  <text x="376" y="412" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="34" font-weight="500" fill="#c9cfd8">written in Rust. Web panel, no desktop GUI.</text>
+
+  <!-- chips -->
+  <g font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="26" font-weight="600">
+    <rect x="376" y="458" width="132" height="52" rx="26" fill="#19191d" stroke="#2c2c33" stroke-width="2"/>
+    <text x="442" y="493" text-anchor="middle" fill="#a970ff">Twitch</text>
+    <rect x="522" y="458" width="104" height="52" rx="26" fill="#19191d" stroke="#2c2c33" stroke-width="2"/>
+    <text x="574" y="493" text-anchor="middle" fill="#53fb18">Kick</text>
+    <rect x="640" y="458" width="140" height="52" rx="26" fill="#19191d" stroke="#2c2c33" stroke-width="2"/>
+    <text x="710" y="493" text-anchor="middle" fill="#ff5c5c">YouTube</text>
+    <rect x="808" y="458" width="132" height="52" rx="26" fill="#19191d" stroke="#2c2c33" stroke-width="2"/>
+    <text x="874" y="493" text-anchor="middle" fill="#e6e6e6">Linux</text>
+    <rect x="954" y="458" width="166" height="52" rx="26" fill="#19191d" stroke="#2c2c33" stroke-width="2"/>
+    <text x="1037" y="493" text-anchor="middle" fill="#e6e6e6">Windows</text>
+  </g>
+</svg>
