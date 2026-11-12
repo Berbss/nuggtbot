@@ -213,6 +213,9 @@
   #card_int_overlay.open{ grid-column:span 3; }
   .intcard.open .intcard-body{ max-width:760px; }
   #discord_list li{ flex-wrap:wrap; }
+  /* Clickable overlay/dock URLs: look like <code>, open in a new tab. */
+  a.urllink{ font-family:ui-monospace,monospace; font-size:.92em; color:var(--gold); text-decoration:none; word-break:break-all; }
+  a.urllink:hover, a.urllink:focus-visible{ text-decoration:underline; }
   .intsec-title{ font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); font-weight:700; margin:24px 0 10px; }
   /* Per-card on/off: off cards dim and reorder to the end (right). */
   .intcard .intsw{ position:absolute; bottom:14px; right:14px; margin:0; }
@@ -254,6 +257,7 @@
   </span>
   <span class="spacer"></span>
   <span class="conn" id="conn" style="display:none">—</span>
+  <a class="statbtn" id="updbtn" hidden target="_blank" rel="noopener" href="https://github.com/Berbss/nuggtbot/releases/latest" style="margin-right:8px;text-decoration:none;border-color:var(--gold);color:var(--gold)"><span>Update available</span> <b id="updver"></b></a>
   <div class="statw" id="statw">
     <button class="statbtn" id="statbtn" onclick="toggleStat(event)">
       <span class="sdot grey" id="sdot"></span><span id="statlbl">—</span><span class="statcaret">▾</span>
@@ -607,7 +611,7 @@
     </div>
     <!-- Sounds -->
     <div class="page" data-page="sounds">
-      <h1>Sounds</h1><p class="sub">Upload audio, play it through a Browser Source. In OBS add a Browser Source with URL <code id="ovl_url"></code>. Use sub-action <code>play_sound</code> (file = the name below).</p>
+      <h1>Sounds</h1><p class="sub">Upload audio, play it through a Browser Source. In OBS add a Browser Source with URL <a class="urllink" target="_blank" rel="noopener" href="/overlay" id="ovl_url"></a>. Use sub-action <code>play_sound</code> (file = the name below).</p>
       <section class="card">
         <div class="row">
           <input type="file" id="snd_file" accept="audio/*" style="flex:1 1 240px">
@@ -711,13 +715,22 @@
           </div>
           <div class="intcard-body">
             <p class="hint" style="margin-top:0">Cole seu próprio HTML/CSS/JS do overlay de chat (estilo Streamlabs). O bot alimenta o chat em <code>/events</code> (SSE).</p>
-            <p class="hint" style="margin-top:4px"><b>Overlay</b> (browser source, aparece na live pra todos): <code id="overlay_url">/overlay/chat</code></p>
+            <p class="hint" style="margin-top:4px;color:var(--gold)">100% compatível com o código custom do Chat Box do Streamlabs: cole o HTML/CSS/JS e os Custom Fields do seu tema sem alterar nada.</p>
+            <p class="hint" style="margin-top:4px"><b>Overlay</b> (browser source, aparece na live pra todos): <a class="urllink" target="_blank" rel="noopener" href="/overlay/chat" id="overlay_url">/overlay/chat</a></p>
             <p style="margin:10px 0 2px;font-weight:700">Chat overlay code: <span class="hint" style="font-weight:400">(só o overlay público — não afeta o dock de moderação)</span></p>
             <div style="display:flex;gap:10px;flex-wrap:wrap">
               <div style="flex:1 1 200px;min-width:160px"><label>HTML</label><textarea id="ov_html" rows="10" spellcheck="false" style="width:100%;box-sizing:border-box;font-family:monospace"></textarea></div>
               <div style="flex:1 1 200px;min-width:160px"><label>CSS</label><textarea id="ov_css" rows="10" spellcheck="false" style="width:100%;box-sizing:border-box;font-family:monospace"></textarea></div>
               <div style="flex:1 1 200px;min-width:160px"><label>JS</label><textarea id="ov_js" rows="10" spellcheck="false" style="width:100%;box-sizing:border-box;font-family:monospace"></textarea></div>
             </div>
+            <p style="margin:12px 0 2px;font-weight:700">Streamlabs widget settings</p>
+            <div style="display:flex;gap:10px;flex-wrap:wrap">
+              <div style="flex:1 1 130px;min-width:120px"><label>Text color</label><input id="ov_text_color" placeholder="#ffffff"></div>
+              <div style="flex:1 1 130px;min-width:120px"><label>Background color</label><input id="ov_bg_color" placeholder="rgba(0,0,0,0)"></div>
+              <div style="flex:1 1 110px;min-width:100px"><label>Font size (px)</label><input id="ov_font_size" type="number" min="1" placeholder="40"></div>
+              <div style="flex:1 1 130px;min-width:120px"><label>Hide delay (s)</label><input id="ov_hide_delay" type="number" min="0" placeholder="0" title="0 = always show messages"></div>
+            </div>
+            <div style="margin-top:10px"><label>Custom Fields (JSON)</label><textarea id="ov_custom_fields" rows="4" spellcheck="false" placeholder='{ "accent": { "type": "colorpicker", "label": "Accent", "value": "#f0a81e" } }' style="width:100%;box-sizing:border-box;font-family:monospace"></textarea></div>
             <div style="margin-top:16px;border-top:1px solid #2a2f3a;padding-top:12px">
               <p style="margin:0 0 8px;font-weight:700">Ignorar no overlay <span class="hint" style="font-weight:400">(só esconde no overlay público, o dock continua vendo tudo)</span></p>
               <div style="display:flex;gap:10px;flex-wrap:wrap">
@@ -740,9 +753,9 @@
           </div>
           <div class="intcard-body">
             <p class="hint" style="margin-top:0">Browser docks pro seu OBS. A edição de título/categoria fica na própria dock.</p>
-            <p class="hint" style="margin-top:4px"><b>Stream Info</b> (editar título + categoria dentro do OBS): <code id="si_dock_url">/dock/streaminfo</code></p>
-            <p class="hint" style="margin-top:4px"><b>Chat</b> (ler + moderar): <code id="dock_chat_url">/dock/chat</code></p>
-            <p class="hint" style="margin-top:4px"><b>Eventos</b> (subs, recompensas, bits, raids, follows): <code id="dock_events_url">/dock/events</code></p>
+            <p class="hint" style="margin-top:4px"><b>Stream Info</b> (editar título + categoria dentro do OBS): <a class="urllink" target="_blank" rel="noopener" href="/dock/streaminfo" id="si_dock_url">/dock/streaminfo</a></p>
+            <p class="hint" style="margin-top:4px"><b>Chat</b> (ler + moderar): <a class="urllink" target="_blank" rel="noopener" href="/dock/chat" id="dock_chat_url">/dock/chat</a></p>
+            <p class="hint" style="margin-top:4px"><b>Eventos</b> (subs, recompensas, bits, raids, follows): <a class="urllink" target="_blank" rel="noopener" href="/dock/events" id="dock_events_url">/dock/events</a></p>
           </div>
         </section>
       </div>
@@ -1470,7 +1483,7 @@ function renderPluginCards(ps){ const grid=document.getElementById('intgrid_plug
     const sw=c.has_switch?`<label class="chk intsw" onclick="event.stopPropagation()" title="Ligar / desligar"><input type="checkbox" id="pl_${p.name}_switch" ${on?'checked':''} onchange="pluginToggle('${p.name}',this.checked)"></label>`:'';
     const badge=c.has_status?`<span class="intbadge red" id="pl_${p.name}_badge">—</span>`:'';
     const fields=(c.fields||[]).map(f=>`<div><label>${esc(f.label)}</label><input id="pl_${p.name}_${f.key}" type="${f.kind==='number'?'number':(f.kind==='password'?'password':'text')}" placeholder="${esc(f.placeholder||'')}" value="${esc(cfg[f.key]==null?'':cfg[f.key])}"></div>`).join('');
-    const pages=(c.pages||[]).map(pg=>`<p class="hint" style="margin:6px 0 0"><b>${esc(pg.label||pg.path)}</b> (browser source): <code>${esc(location.origin+'/plugin/'+p.name+'/'+pg.path)}</code></p>`).join('');
+    const pages=(c.pages||[]).map(pg=>`<p class="hint" style="margin:6px 0 0"><b>${esc(pg.label||pg.path)}</b> (browser source): <a class="urllink" target="_blank" rel="noopener" href="${esc('/plugin/'+p.name+'/'+pg.path)}">${esc(location.origin+'/plugin/'+p.name+'/'+pg.path)}</a></p>`).join('');
     sec.innerHTML=`<div class="intcard-head" onclick="this.closest('.intcard').classList.toggle('open')">
       <span class="caret2">▸</span>
       <span class="pbrand" style="color:${esc(c.color||'#9aa0a6')}"><svg class="plogo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">${c.icon||''}</svg><span class="intcard-title">${esc(c.title||p.name)}</span></span>
@@ -1519,16 +1532,21 @@ function addIgnoreReward(selId){ ovRewardRow(selId||''); }
 async function loadOverlayCfg(){ let c; try{ c=await j('GET','/api/overlay/chat'); }catch(_){ return; }
   const h=document.getElementById('ov_html'),s=document.getElementById('ov_css'),jj=document.getElementById('ov_js');
   if(h)h.value=c.html||''; if(s)s.value=c.css||''; if(jj)jj.value=c.js||'';
+  for(const [id,k] of OV_WIDGET_FIELDS){ const el=document.getElementById(id); if(el)el.value=c[k]||''; }
   const iu=document.getElementById('ov_ign_users'); if(iu)iu.value=c.ignoreUsers||'';
   const ip=document.getElementById('ov_ign_prefixes'); if(ip)ip.value=c.ignorePrefixes||'';
   try{ const r=await j('GET','/api/rewards'); window._ovRewards=r.rewards||[]; }catch(_){ window._ovRewards=window._ovRewards||[]; }
   const wrap=document.getElementById('ov_ign_rewards'); if(wrap){ wrap.innerHTML=''; for(const id of (c.ignoreRewards||[])) ovRewardRow(id); }
   const u=document.getElementById('overlay_url'); if(u)u.textContent=location.origin+'/overlay/chat';
   const du=document.getElementById('dock_chat_url'); if(du)du.textContent=location.origin+'/dock/chat'; }
+const OV_WIDGET_FIELDS=[['ov_text_color','textColor'],['ov_bg_color','backgroundColor'],['ov_font_size','fontSize'],['ov_hide_delay','hideDelay'],['ov_custom_fields','customFields']];
 async function saveOverlayCfg(btn){
+  const cf=document.getElementById('ov_custom_fields').value.trim();
+  if(cf){ try{ JSON.parse(cf); }catch(e){ toast('Custom Fields: JSON inválido — '+e.message,true); return; } }
   const rewards=[...document.querySelectorAll('#ov_ign_rewards .ov-rw-sel')].map(s=>s.value).filter(Boolean);
   const body={html:document.getElementById('ov_html').value,css:document.getElementById('ov_css').value,js:document.getElementById('ov_js').value,
     ignoreUsers:document.getElementById('ov_ign_users').value,ignorePrefixes:document.getElementById('ov_ign_prefixes').value,ignoreRewards:rewards};
+  for(const [id,k] of OV_WIDGET_FIELDS) body[k]=document.getElementById(id).value;
   await j('PUT','/api/overlay/chat',body); toast('Overlay salvo'); const c=btn.closest('.intcard'); if(c)c.classList.remove('open'); }
 // The Stream Info card now only lists the OBS dock URLs; editing lives in the dock.
 function loadStreamInfo(){
@@ -1543,6 +1561,25 @@ async function loadIntegrations(){ let arr; try{ arr=await j('GET','/api/integra
     const sw=document.getElementById(i.key+'_switch'); if(sw)sw.checked=!!i.auto;
     const card=document.getElementById('card_int_'+i.key); if(card)card.classList.toggle('off', !i.auto); });
   (window._plugins||[]).forEach(p=>{ if(p.card&&p.card.has_status)pluginStatus(p.name); }); }
+// ---------- update check ----------
+// Compares this build's version with the latest GitHub release (asked from the
+// browser, cached per tab session) and shows the top-bar chip when it is newer.
+const RELEASES_API='https://api.github.com/repos/Berbss/nuggtbot/releases/latest';
+function verNewer(a,b){ const n=v=>String(v).replace(/^v/i,'').split(/[.+-]/).slice(0,3).map(x=>parseInt(x,10)||0);
+  const x=n(a),y=n(b); for(let i=0;i<3;i++){ if((x[i]||0)!==(y[i]||0)) return (x[i]||0)>(y[i]||0); } return false; }
+console.assert(verNewer('v0.2.0','0.1.9')&&verNewer('1.0.0','0.9.9')&&!verNewer('v0.1.0','0.1.0')&&!verNewer('0.1.0','0.1.1'),'verNewer');
+async function checkUpdate(){ try{
+    const cur=(await j('GET','/api/health')).version; if(!cur)return;
+    let rel=null; try{ rel=JSON.parse(sessionStorage.getItem('nb_latest')||'null'); }catch(_){}
+    if(!rel){ const r=await fetch(RELEASES_API,{headers:{Accept:'application/vnd.github+json'}}); if(!r.ok)return;
+      const d=await r.json(); rel={tag:d.tag_name,url:d.html_url}; try{ sessionStorage.setItem('nb_latest',JSON.stringify(rel)); }catch(_){} }
+    if(!rel.tag||!verNewer(rel.tag,cur))return;
+    const b=document.getElementById('updbtn'); document.getElementById('updver').textContent=rel.tag;
+    if(/^https:\/\/github\.com\//.test(rel.url||''))b.href=rel.url;
+    b.title='nuggtbot '+cur+' → '+rel.tag; b.hidden=false;
+  }catch(_){ /* offline or rate-limited: stay quiet */ } }
+checkUpdate();
+
 // ---------- i18n (EN / pt-BR) ----------
 // Translation pairs [english, portuguese]. The engine translates the panel in
 // either direction by exact trimmed string, covering static HTML and any content
@@ -1550,6 +1587,14 @@ async function loadIntegrations(){ let arr; try{ arr=await j('GET','/api/integra
 // omitted. I18N_PAIRS_FILL_START / _END mark the auto-generated table.
 const I18N_PAIRS = [
 /* I18N_PAIRS_FILL_START */
+["Update available","Atualização disponível"],
+["Streamlabs widget settings","Ajustes do widget Streamlabs"],
+["Text color","Cor do texto"],
+["Background color","Cor de fundo"],
+["Font size (px)","Tamanho da fonte (px)"],
+["Hide delay (s)","Tempo para sumir (s)"],
+["0 = always show messages","0 = sempre mostrar as mensagens"],
+["100% compatible with Streamlabs Chat Box custom code: paste your theme's HTML/CSS/JS and Custom Fields unchanged.","100% compatível com o código custom do Chat Box do Streamlabs: cole o HTML/CSS/JS e os Custom Fields do seu tema sem alterar nada."],
 ["🚧 Work in progress — these API integrations aren't functional yet. The fields save, but nothing connects or runs.","🚧 Em desenvolvimento — estas integrações de API ainda não funcionam. Os campos salvam, mas nada conecta ou executa."],
   // nav / sections
   ["Overview","Visão geral"],

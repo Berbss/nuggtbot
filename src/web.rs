@@ -114,7 +114,7 @@ pub async fn serve(cfg: Config, state: AppState) -> anyhow::Result<()> {
 }
 
 async fn health() -> Json<serde_json::Value> {
-    Json(serde_json::json!({ "ok": true, "app": "nuggtbot" }))
+    Json(serde_json::json!({ "ok": true, "app": "nuggtbot", "version": env!("CARGO_PKG_VERSION") }))
 }
 
 /// Connection status for the panel's top-right widget. Only items the user has
@@ -1164,6 +1164,10 @@ async fn put_overlay_cfg(Json(body): Json<serde_json::Value>) -> impl IntoRespon
         "html": pick("html"), "css": pick("css"), "js": pick("js"),
         "ignoreUsers": pick("ignoreUsers"), "ignorePrefixes": pick("ignorePrefixes"),
         "ignoreRewards": rewards,
+        // Streamlabs widget settings + Custom Fields (JSON text).
+        "textColor": pick("textColor"), "backgroundColor": pick("backgroundColor"),
+        "fontSize": pick("fontSize"), "hideDelay": pick("hideDelay"),
+        "customFields": pick("customFields"),
     });
     match std::fs::write(OVERLAY_CFG, serde_json::to_vec_pretty(&cfg).unwrap_or_default()) {
         Ok(()) => Json(serde_json::json!({ "ok": true })),
@@ -1177,15 +1181,21 @@ async fn put_overlay_cfg(Json(body): Json<serde_json::Value>) -> impl IntoRespon
 async fn overlay_chat() -> Html<String> {
     let cfg = read_overlay_cfg();
     let s = |k: &str| cfg.get(k).and_then(|v| v.as_str()).unwrap_or("").to_string();
-    // Streamlabs themes use widget-setting placeholders the Streamlabs runtime
-    // would fill; substitute the common ones (CSS only — per-message {from}/
-    // {color}/{message}/{messageId} stay for the overlay runtime's template).
-    // A theme can override any by writing a literal value in its CSS.
-    let css = s("css")
-        .replace("{text_color}", "#ffffff")
-        .replace("{background_color}", "rgba(0,0,0,0)")
-        .replace("{font_size}", "40px")
-        .replace("{message_hide_delay}", "600s");
+    // Streamlabs fills these widget-setting placeholders from the Chat Box
+    // settings; here they come from the card (same defaults when left blank).
+    // Per-message {from}/{color}/{message}/{messageId} stay for the runtime.
+    let or = |k: &str, d: &str| { let v = s(k); if v.trim().is_empty() { d.to_string() } else { v.trim().to_string() } };
+    // Hide delay in seconds; 0 / blank = always show (Streamlabs "Always Show Messages").
+    let delay = s("hideDelay").trim().parse::<u64>().ok().filter(|d| *d > 0).unwrap_or(100_000_000); // Streamlabs' own "always show" value
+    let fields: serde_json::Value = serde_json::from_str(&s("customFields")).unwrap_or(serde_json::Value::Null);
+    let widget = |src: String| apply_custom_fields(&src, &fields)
+        .replace("{text_color}", &or("textColor", "#ffffff"))
+        .replace("{background_color}", &or("backgroundColor", "rgba(0,0,0,0)"))
+        .replace("{font_size}", &format!("{}px", or("fontSize", "40").trim_end_matches("px")))
+        .replace("{message_hide_delay}", &format!("{delay}s"));
+    let css = widget(s("css"));
+    let html = apply_custom_fields(&s("html"), &fields);
+    let js = apply_custom_fields(&s("js"), &fields);
     // Overlay-only ignore lists (users / command prefixes / reward ids). The
     // runtime reads them to skip matching messages; the dock is unaffected.
     // Escape "<" so a user-typed value can't close the <script>.
@@ -1200,10 +1210,55 @@ async fn overlay_chat() -> Html<String> {
     Html(format!(
         "<!doctype html><html><head><meta charset=\"utf-8\">\
          <meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\
-         <style>{}</style></head><body>{}<script>{}</script>\
+         {}<style>{}</style><style>{}</style></head><body>{}<script>{}</script>\
          <script>window.__ovFilter={};</script><script>{}</script></body></html>",
-        css, s("html"), s("js"), filter, OVERLAY_RUNTIME
+        SL_FRAME_HEAD, css, SL_FRAME_BASE_CSS, html, js, filter, OVERLAY_RUNTIME
     ))
+}
+
+/// What Streamlabs' chat-box frame loads around the custom code (measured on the
+/// real widget): Open Sans, animate.css 3.5.2 (themes use its keyframes), a global
+/// jQuery (`$`), and a
+/// base reset placed AFTER the theme CSS.
+const SL_FRAME_HEAD: &str = "<link rel=\"stylesheet\" href=\"https://fonts.googleapis.com/css?family=Open+Sans\">\
+<link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css\">\
+<script src=\"https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js\"></script>";
+const SL_FRAME_BASE_CSS: &str = "html, body { margin: 0px; padding: 0px; width: 100%; height: 100%; background: transparent; overflow: hidden; }";
+
+/// Streamlabs Custom Fields: replace `{name}` with each field's value. Accepts
+/// the Streamlabs shape `{"name": {"value": ...}}` and a plain `{"name": value}`.
+fn apply_custom_fields(src: &str, fields: &serde_json::Value) -> String {
+    let Some(map) = fields.as_object() else { return src.to_string() };
+    let mut out = src.to_string();
+    for (name, field) in map {
+        let value = field.get("value").unwrap_or(field);
+        let text = match value {
+            serde_json::Value::String(s) => s.clone(),
+            serde_json::Value::Null | serde_json::Value::Object(_) | serde_json::Value::Array(_) => continue,
+            other => other.to_string(),
+        };
+        out = out.replace(&format!("{{{name}}}"), &text);
+    }
+    out
+}
+
+#[cfg(test)]
+mod tests {
+    use super::apply_custom_fields;
+    use serde_json::json;
+
+    #[test]
+    fn custom_fields_replace_streamlabs_and_plain_shapes() {
+        let fields = json!({ "accent": { "type": "colorpicker", "value": "#ff0" }, "size": 12, "on": true });
+        let out = apply_custom_fields("a{accent} b{size} c{on} d{from}", &fields);
+        assert_eq!(out, "a#ff0 b12 ctrue d{from}");
+    }
+
+    #[test]
+    fn custom_fields_ignore_invalid_or_missing_json() {
+        assert_eq!(apply_custom_fields("x{a}", &json!(null)), "x{a}");
+        assert_eq!(apply_custom_fields("x{a}", &json!({ "a": { "label": "no value" } })), "x{a}");
+    }
 }
 
 /// Streamlabs-chatbox emulation injected into the overlay host (see the file).

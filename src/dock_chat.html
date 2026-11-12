@@ -166,18 +166,24 @@ tabs.querySelector('[data-sel="all"]').onclick=()=>selectTab('all');
     b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true">'+PICO[p]+'</svg>'; b.onclick=()=>selectTab(p);
     tabs.insertBefore(b, $('gear')); }); })();
 
-async function send(){ const t=$('text'); const text=t.value.trim(); if(!text)return;
+// One send at a time: Enter (incl. key repeat) or a second click while a request
+// is in flight must not post the same message again.
+let sending=false;
+async function send(){ if(sending)return; const t=$('text'); const text=t.value.trim(); if(!text)return;
   const targets = sel==='all' ? ready.slice() : [sel];
   if(!targets.length){ result('nenhuma plataforma conectada'); return; }
-  $('send').disabled=true; const r=await post('/api/chat/send',{text,targets}); $('send').disabled=false;
+  sending=true; $('send').disabled=true; t.value='';
+  let r; try{ r=await post('/api/chat/send',{text,targets}); }catch(e){ r={error:String(e)}; }
+  sending=false; $('send').disabled=false;
   const res=r.results||{};
   // YouTube without an open live is ignored silently, not shown as an error.
   const shown=targets.map(p=>({p,ok:!!(res[p]&&res[p].ok),err:(res[p]&&res[p].error)||r.error||''}))
     .filter(x=>!(x.p==='youtube'&&/no active YouTube/i.test(x.err)));
   result(shown.map(x=>x.p+': '+(x.ok?'ok':('erro '+x.err))).join(' · '));
-  if(shown.every(x=>x.ok))t.value=''; }
+  // Failed: give the text back (unless the user already typed something new).
+  if(!shown.every(x=>x.ok)&&!t.value)t.value=text; }
 $('send').onclick=send;
-$('text').addEventListener('keydown',e=>{ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); send(); } });
+$('text').addEventListener('keydown',e=>{ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); if(!e.repeat&&!e.isComposing)send(); } });
 
 // --- feed (SSE, reconnects on its own) ---
 const parse=fn=>e=>{ try{ fn(JSON.parse(e.data)); }catch(_){} };

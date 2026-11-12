@@ -61,13 +61,14 @@ fn push_text(parts: &mut Vec<Value>, s: &str) {
 pub fn twitch_msg(m: &PrivmsgMessage) -> Value {
     let from = if m.sender.name.is_empty() { m.sender.login.clone() } else { m.sender.name.clone() };
     let color = m.name_color.as_ref().map(|c| format!("#{:02X}{:02X}{:02X}", c.r, c.g, c.b));
-    let badges = {
+    // (url, set name) pairs, so badgeTypes stays index-aligned with badges.
+    let (badges, badge_types): (Vec<String>, Vec<String>) = {
         let map = TW_BADGES.read().unwrap();
         m.badges.iter().filter_map(|b| {
             map.as_ref()
                 .and_then(|m| m.get(&format!("{}/{}", b.name, b.version)))
-                .cloned()
-        }).collect::<Vec<_>>()
+                .map(|url| (url.clone(), b.name.clone()))
+        }).unzip()
     };
     let parts = apply_third_party(twitch_parts(&m.message_text, &m.emotes));
     json!({
@@ -78,7 +79,11 @@ pub fn twitch_msg(m: &PrivmsgMessage) -> Value {
         "userId": m.sender.id,
         "color": color,
         "badges": badges,
+        "badgeTypes": badge_types,
         "parts": parts,
+        "text": m.message_text,
+        // Raw IRC tags, so the overlay can hand Streamlabs-style themes the same `tags`.
+        "tags": m.source.tags.0.iter().map(|(k, v)| (k.clone(), v.clone().unwrap_or_default())).collect::<HashMap<_, _>>(),
         "action": m.is_action,
         "reward": m.source.tags.0.get("custom-reward-id").and_then(|v| v.as_deref()).unwrap_or(""),
     })
@@ -118,10 +123,10 @@ pub fn kick_msg(id: &str, from: &str, user_id: &str, content: &str, color: Optio
         .filter(|c| is_hex6(c))
         .map(|c| c.to_string())
         .unwrap_or_else(|| color_hash(from));
-    let badges: Vec<String> = badge_types.iter()
+    let shown: Vec<&String> = badge_types.iter()
         .filter(|t| KICK_BADGE_TYPES.contains(&t.as_str()))
-        .map(|t| format!("/badges/kick/{t}.svg"))
         .collect();
+    let badges: Vec<String> = shown.iter().map(|t| format!("/badges/kick/{t}.svg")).collect();
     let parts = apply_third_party(kick_parts(content));
     json!({
         "id": format!("kick:{id}"),
@@ -131,7 +136,9 @@ pub fn kick_msg(id: &str, from: &str, user_id: &str, content: &str, color: Optio
         "userId": user_id,
         "color": color,
         "badges": badges,
+        "badgeTypes": shown,
         "parts": parts,
+        "text": content,
     })
 }
 
@@ -173,6 +180,7 @@ pub fn youtube_msg(id: &str, from: &str, text: &str) -> Value {
         "color": color_hash(from),
         "badges": [],
         "parts": apply_third_party(vec![json!({ "type": "text", "text": text })]),
+        "text": text,
     })
 }
 

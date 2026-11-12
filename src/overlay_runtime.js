@@ -24,6 +24,14 @@
     }
     return false;
   }
+  // Streamlabs serves 1x badge/emote images; a theme without explicit sizing
+  // relies on that natural size, so use the 1x variant of each CDN URL.
+  function x1(u) {
+    return String(u)
+      .replace(/^(https:\/\/static-cdn\.jtvnw\.net\/badges\/v1\/[^/]+)\/[23]$/, '$1/1')
+      .replace(/^(https:\/\/static-cdn\.jtvnw\.net\/emoticons\/v2\/.+)\/[23]\.0$/, '$1/1.0')
+      .replace(/^(https:\/\/cdn\.(?:7tv\.app|betterttv\.net)\/emote\/[^/]+)\/[234]x(\.webp)?$/, '$1/1x$2');
+  }
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
@@ -45,10 +53,12 @@
     node.setAttribute('data-from', m.from || '');
     var bslot = node.querySelector('.badges');
     if (bslot && m.badges) {
-      m.badges.forEach(function (u) {
+      m.badges.forEach(function (u, n) {
         if (/^https:/.test(u) || /^\/badges\/kick\//.test(u)) {
           var i = document.createElement('img');
-          i.className = 'badge'; i.src = u; i.style.height = '1em'; i.style.verticalAlign = 'middle';
+          // Streamlabs badge markup: class="badge <type>-icon".
+          var t = String((m.badgeTypes || [])[n] || '').replace(/[^a-zA-Z0-9_-]/g, '');
+          i.src = x1(u); i.className = 'badge' + (t ? ' ' + t + '-icon' : '');
           bslot.appendChild(i);
         }
       });
@@ -63,9 +73,10 @@
           // sizes the box. A theme without .emote CSS still shows the img.
           var span = document.createElement('span');
           span.className = 'emote';
-          span.style.backgroundImage = "url('" + p.url + "')";
+          var eu = x1(p.url);
+          span.style.backgroundImage = "url('" + eu + "')";
           var i = document.createElement('img');
-          i.src = p.url; i.style.verticalAlign = 'middle';
+          i.src = eu;
           span.appendChild(i);
           mslot.appendChild(span);
         }
@@ -73,13 +84,36 @@
     }
     log.appendChild(node);
     while (log.children.length > MAX) log.removeChild(log.firstChild);
+    // Streamlabs custom JS listens for this on every chat message.
+    var tags = m.tags || {
+      'display-name': m.from, color: m.color || '', id: m.id, 'user-id': m.userId || '',
+      badges: (m.badgeTypes || []).join(','),
+      mod: has(m, 'moderator'), subscriber: has(m, 'subscriber')
+    };
+    var login = m.login || m.from, body = m.text != null ? m.text : '';
+    // Same shape Streamlabs passes (measured on the real widget); no tokens.
+    fire('onEventReceived', {
+      command: 'PRIVMSG', from: login, body: body, messageId: m.id,
+      platform: m.platform + '_account', tags: tags, priority: 10, pic: '',
+      owner: /(^|,)broadcaster\//.test(tags.badges || '') || has(m, 'broadcaster') === '1',
+      subscriber: tags.subscriber === '1', userType: tags['user-type'] || 'user',
+      payload: { command: 'PRIVMSG', tags: tags, params: ['#' + login], crlf: body, prefix: login + '!' + login + '@' + login + '.tmi.twitch.tv' }
+    });
+  }
+  function has(m, type) { return (m.badgeTypes || []).indexOf(type) >= 0 ? '1' : '0'; }
+  function fire(name, detail) {
+    try { document.dispatchEvent(new CustomEvent(name, { detail: detail })); } catch (_) { }
   }
   function P(fn) { return function (e) { try { fn(JSON.parse(e.data)); } catch (_) { } }; }
   var src = new EventSource('/events');
   src.addEventListener('message', P(render));
   src.addEventListener('delete', P(function (d) {
     var ns = log.querySelectorAll('[data-id]');
-    for (var k = 0; k < ns.length; k++) if (ns[k].getAttribute('data-id') === d.id) ns[k].remove();
+    // Like Streamlabs: mark as .deleted (themes style it, default is hidden).
+    for (var k = 0; k < ns.length; k++) if (ns[k].getAttribute('data-id') === d.id) {
+      ns[k].classList.add('deleted'); ns[k].style.visibility = 'hidden';
+    }
   }));
   src.addEventListener('clear', P(function () { log.innerHTML = ''; }));
+  fire('onLoad', {});
 })();

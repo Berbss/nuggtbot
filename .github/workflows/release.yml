@@ -98,10 +98,17 @@ jobs:
           ./"$AITOOL" --appimage-extract >/dev/null
           ARCH="$ARCH" ./squashfs-root/AppRun AppDir "${{ matrix.name }}.AppImage"
 
+      # Release body = this tag's section of CHANGELOG.md.
+      - name: Release notes
+        if: startsWith(github.ref, 'refs/tags/')
+        shell: bash
+        run: awk -v t="## ${GITHUB_REF_NAME}" '$0==t{f=1;next} /^## /{f=0} f' CHANGELOG.md > release-notes.md
+
       - name: Attach to release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2
         with:
+          body_path: release-notes.md
           files: |
             ${{ matrix.name }}.exe
             ${{ matrix.name }}.tar.gz
